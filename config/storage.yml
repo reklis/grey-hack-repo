@@ -16,6 +16,16 @@ amazon:
   upload:
     cache_control: 'private, max-age=31536000'
 
+# MinIO (S3-compatible) for local Docker development
+minio:
+  service: S3
+  access_key_id: <%= ENV.fetch('MINIO_ACCESS_KEY', 'minioaccess') %>
+  secret_access_key: <%= ENV.fetch('MINIO_SECRET_KEY', 'miniosecret') %>
+  region: us-east-1
+  bucket: greyhackbucket
+  endpoint: <%= ENV.fetch('MINIO_ENDPOINT', 'http://localhost:9000') %>
+  force_path_style: true
+
 
 # Remember not to checkin your GCS keyfile to a repository
 # google:

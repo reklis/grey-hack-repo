@@ -1,0 +1,130 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    environment:
+      RAILS_ENV: production
+      DATABASE_URL: postgres://postgres:postgres@db:5432/grey_repo_production
+      REDIS_URL: redis://redis:6379/1
+      SECRET_KEY_BASE: 3e363bcd52e247b738b276c17af3d7f467db6af0ac9b7416e64fce3fbb34599163dc5149ce316c0770438e82f2858112788dd47bf81170893f023042119642da
+      RAILS_SERVE_STATIC_FILES: "true"
+      RAILS_LOG_TO_STDOUT: "true"
+      DB_POOL: 5
+      ACTIVE_STORAGE_SERVICE: minio
+      MINIO_ENDPOINT: http://minio:9000
+      APP_HOST: localhost:3000
+      SMTP_ADDRESS: mailpit
+      SMTP_PORT: 1025
+    volumes:
+      - rails_storage:/rails/storage
+    restart: unless-stopped
+
+  sidekiq:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: bundle exec sidekiq -C config/sidekiq.yml
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    environment:
+      RAILS_ENV: production
+      DATABASE_URL: postgres://postgres:postgres@db:5432/grey_repo_production
+      REDIS_URL: redis://redis:6379/1
+      SECRET_KEY_BASE: 3e363bcd52e247b738b276c17af3d7f467db6af0ac9b7416e64fce3fbb34599163dc5149ce316c0770438e82f2858112788dd47bf81170893f023042119642da
+      DB_POOL: 5
+      ACTIVE_STORAGE_SERVICE: minio
+      MINIO_ENDPOINT: http://minio:9000
+      APP_HOST: localhost:3000
+      SMTP_ADDRESS: mailpit
+      SMTP_PORT: 1025
+    volumes:
+      - rails_storage:/rails/storage
+    restart: unless-stopped
+
+  db:
+    image: postgres:16-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: grey_repo_production
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  redis:
+    image: redis:8-alpine
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  mailpit:
+    image: axllent/mailpit:latest
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+    restart: unless-stopped
+
+  minio:
+    image: minio/minio:latest
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: minioaccess
+      MINIO_ROOT_PASSWORD: miniosecret
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  createbucket:
+    image: minio/mc:latest
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+      mc alias set myminio http://minio:9000 minioaccess miniosecret;
+      mc mb --ignore-existing myminio/greyhackbucket;
+      mc anonymous set public myminio/greyhackbucket;
+      exit 0;
+      "
+
+volumes:
+  postgres_data:
+  redis_data:
+  rails_storage:
+  minio_data:

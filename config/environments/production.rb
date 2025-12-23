@@ -47,12 +47,12 @@ Rails.application.configure do
   # config.action_dispatch.x_sendfile_header = 'X-Accel-Redirect' # for NGINX
 
   # Store uploaded files on the local file system (see config/storage.yml for options).
-  config.active_storage.service = :amazon
+  config.active_storage.service = ENV.fetch("ACTIVE_STORAGE_SERVICE", "amazon").to_sym
 
   # Mount Action Cable outside main process or domain.
   # config.action_cable.mount_path = nil
   # config.action_cable.url = "wss://www.greyrepo.xyz/cable"
-  config.action_cable.allowed_request_origins = ["https://www.greyrepo.xyz", /https:\/\/www.greyrepo.xyz.*/]
+  config.action_cable.allowed_request_origins = [ENV.fetch("APP_HOST", "https://www.greyrepo.xyz"), /#{Regexp.escape(ENV.fetch("APP_HOST", "www.greyrepo.xyz"))}.*/]
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
   config.force_ssl = false
@@ -140,16 +140,23 @@ Rails.application.configure do
   # config.active_record.database_resolver_context = ActiveRecord::Middleware::DatabaseSelector::Resolver::Session
 
   config.action_mailer.delivery_method = :smtp
-  config.action_mailer.smtp_settings = {
-    user_name: "apikey",
-    password: ENV["SENDGRID_API_KEY"],
-    domain: "greyrepo.xyz",
-    address: "smtp.sendgrid.net",
-    port: 587,
-    authentication: :plain,
-    enable_starttls_auto: true
-  }
+  config.action_mailer.smtp_settings = if ENV["SMTP_ADDRESS"]
+    {
+      address: ENV["SMTP_ADDRESS"],
+      port: ENV.fetch("SMTP_PORT", 1025).to_i
+    }
+  else
+    {
+      user_name: "apikey",
+      password: ENV["SENDGRID_API_KEY"],
+      domain: "greyrepo.xyz",
+      address: "smtp.sendgrid.net",
+      port: 587,
+      authentication: :plain,
+      enable_starttls_auto: true
+    }
+  end
 
-  config.action_mailer.default_url_options = {host: "www.greyrepo.xyz"}
-  config.action_controller.default_url_options = {host: "www.greyrepo.xyz"}
+  config.action_mailer.default_url_options = {host: ENV.fetch("APP_HOST", "www.greyrepo.xyz")}
+  config.action_controller.default_url_options = {host: ENV.fetch("APP_HOST", "www.greyrepo.xyz")}
 end
