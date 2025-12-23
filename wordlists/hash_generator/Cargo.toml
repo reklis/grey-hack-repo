@@ -1,0 +1,12 @@
+[package]
+name = "hash_generator"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+md-5 = "0.10"
+rayon = "1.8"
+
+[profile.release]
+opt-level = 3
+lto = true
