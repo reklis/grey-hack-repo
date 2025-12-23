@@ -4,7 +4,8 @@ class DecipherReflex < ApplicationReflex
   def deciphe(value)
     result = value.split("\n").map do |line|
       values = line.split(":")
-      values[-1] = PASSWORDS[values[-1]] || values[-1]
+      hash = values[-1].strip.downcase
+      values[-1] = PASSWORDS[hash] || values[-1]
       values.join(":")
     end.join("\n")
     morph "#result", result || "no result"
