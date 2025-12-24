@@ -5,6 +5,15 @@
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-SGFHR6J5SJ"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-SGFHR6J5SJ');
+    </script>
+
     <%= display_meta_tags(default_meta_tags) %>
 
     <%# <%= javascript_include_tag "main", "data-turbo-track": "reload", defer: true %>
@@ -61,19 +70,17 @@
       <%= yield :containerless %>
     </div>
     <footer class="mt-20 bg-beaver-900 border-t border-beaver-800 text-white px-4">
-      <div class="container max-w-5xl mx-auto py-4">
-        <p>
-        contribute in the project on github: <a class="link" href="https://github.com/TopRoupi/grey-hack-repo">https://github.com/TopRoupi/grey-hack-repo</a>
-        </p>
-        <p>
-        get <%= link_to "supporter badge", supporter_checkout_path, class: "link" %> on your profile
-        </p>
-        <p>
-        <%= link_to "make a donation (paypal)", "https://www.paypal.com/donate/?hosted_button_id=MLQW58ZDPTSVJ", class: "link" %>
-        </p>
-        <p>
-        discord for bug reports/suggestion: <a class="link" href="https://discord.gg/e749jgsrkt">https://discord.gg/e749jgsrkt</a>
-        </p>
+      <div class="container max-w-5xl mx-auto py-6">
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+          <a href="https://github.com/reklis/grey-hack-repo" class="link flex items-center gap-2 hover:text-primary transition-colors">
+            <%= octicon "mark-github", height: 20, class: "fill-current" %>
+            <span>Contribute on GitHub</span>
+          </a>
+          <a href="https://element.fm" class="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors">
+            <span>Sponsored by</span>
+            <span class="font-bold text-white">ELEMENT.FM</span>
+          </a>
+        </div>
       </div>
     </footer>
   </body>
