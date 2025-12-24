@@ -16,6 +16,6 @@ module UsersHelper
   private
 
   def default_avatar
-    image_url("user.png")
+    image_url("defaultavatar.png")
   end
 end

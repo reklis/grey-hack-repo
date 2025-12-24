@@ -1,3 +1,9 @@
+<div class="text-center mb-6">
+  <p class="text-lg text-gray-400">Password database contains</p>
+  <p class="text-3xl font-bold text-primary"><%= number_with_delimiter(PASSWORDS.size) %></p>
+  <p class="text-lg text-gray-400">precomputed hashes</p>
+</div>
+
 <div data-controller="decipher">
   <p>input: </p>
   <textarea data-action="debounced:input->decipher#deciphe" class="h-64 textarea w-full textarea-bordered my-2" data-decipher-target="input"></textarea>

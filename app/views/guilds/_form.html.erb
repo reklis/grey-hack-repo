@@ -1,7 +1,7 @@
 <%= form_for guild, builder: DaisyFormBuilder do |f| %>
   <div data-controller="profile-preview">
     <%= render(Users::ProfilePreview.new(
-      avatar: f.object.avatar_url || image_url("user.png"),
+      avatar: f.object.avatar_url || image_url("defaultavatar.png"),
       avatar_html: {data: {profile_preview_target: "avatarimg"}},
       banner: f.object.banner_url || image_url("userbanner2.svg"),
       banner_html: {data: {profile_preview_target: "bannerimg"}},
