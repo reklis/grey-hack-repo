@@ -19,11 +19,7 @@
     Post ready to publish
   </p>
 
-  <%= render(Layout::ConfirmationDialog.new()) do |c| %>
-    <% c.title { "Publish post " + @post.title } %>
-    <% c.button(class: "mb-5 btn btn-success btn-thin mx-auto w-fit block py-1 px-2", id: "publish-post") { "Publish post" } %>
-    <% c.action(tag: :a, href: post_publish_path(@post), style: "success", data: {turbo_method: :patch}){ "Publish" } %>
-  <% end %>
+  <%= link_to "Publish post", post_publish_path(@post), class: "mb-5 btn btn-success btn-thin mx-auto w-fit block py-1 px-2", id: "publish-post", data: {turbo_method: :patch} %>
 <% end %>
 <% end %>
 
