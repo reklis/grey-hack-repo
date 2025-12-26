@@ -1,25 +1,16 @@
 # frozen_string_literal: true
 
 class Layout::Toggle < ApplicationComponent
-  def initialize(tag: :div, open: false, disabled: false, **sys_params)
-    @sys_params = sys_params
-    @open = open
-    @disabled = disabled
-    @tag = tag
-    @sys_params[:data] ||= {}
-    @sys_params[:data][:controller] = "toggle"
-  end
-
-  def toggle(**kwargs)
+  renders_one :toggle, lambda { |**kwargs|
     if @disabled == false
       kwargs[:data] ||= {}
       kwargs[:data][:action] = "click->toggle#toggle touch->toggle#toggle"
     end
 
     Layout::BaseComponent.new(**kwargs)
-  end
+  }
 
-  def toggleable(**kwargs)
+  renders_one :toggleable, lambda { |**kwargs|
     if @disabled == false
       kwargs[:data] ||= {}
       kwargs[:data][:toggle_target] = "toggleable"
@@ -30,5 +21,14 @@ class Layout::Toggle < ApplicationComponent
     end
 
     Layout::BaseComponent.new(**kwargs)
+  }
+
+  def initialize(tag: :div, open: false, disabled: false, **sys_params)
+    @sys_params = sys_params
+    @open = open
+    @disabled = disabled
+    @tag = tag
+    @sys_params[:data] ||= {}
+    @sys_params[:data][:controller] = "toggle"
   end
 end

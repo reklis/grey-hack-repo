@@ -1,21 +1,21 @@
 <%= render Layout::Tabs.new(active_tab_class: "tab-active") do |c| %>
   <% if @script.extension == "md" %>
-    <% c.tab { "Preview" } %>
-    <% c.tab_content do %>
+    <% c.with_tab { "Preview" } %>
+    <% c.with_tab_content do %>
       <div class="trix-content overflow-x-auto">
         <%= markdown @script.content %>
       </div>
     <% end %>
   <% end %>
 
-  <% c.tab { "Code" } %>
-  <% c.tab_content do %>
+  <% c.with_tab { "Code" } %>
+  <% c.with_tab_content do %>
     <div class="overflow-x-auto hljs">
       <%= render(CodeHighlight.new(code: @script.content, extension: @script.extension)) %>
     </div>
   <% end %>
 
-  <% c.tabs_append do %>
+  <% c.with_tabs_append do %>
     <%= render(Scripts::Card::CopyButton::Component.new(script: @script, class: "tab tab-lifted ml-auto block border border-base-300 !bg-success !text-success-content")) %>
   <% end %>
 <% end %>
