@@ -24,9 +24,9 @@ class BuildEditor < ApplicationComponent
     end
 
     render(Layout::ConfirmationDialog.new) do |c|
-      c.title { "Delete #{file.name}" }
-      c.button(class: "btn btn-error float left") { "Delete #{file.class}" }
-      c.action(tag: :button, style: "error", data: options[:data]) { "Delete" }
+      c.with_title { "Delete #{file.name}" }
+      c.with_button(class: "btn btn-error float left") { "Delete #{file.class}" }
+      c.with_action(tag: :button, style: "error", data: options[:data]) { "Delete" }
     end
   end
 end

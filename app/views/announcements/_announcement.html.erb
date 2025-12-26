@@ -36,9 +36,9 @@
         </div>
       <% end %>
     <% end %>
-    <% c.dialog do |cc| %>
-      <% cc.header {"media"} %>
-      <% cc.body do %>
+    <% c.with_dialog do |cc| %>
+      <% cc.with_header {"media"} %>
+      <% cc.with_body do %>
         <%= content_tag(
           :img,
           src: announcement_media(announcement),
@@ -55,7 +55,7 @@
       <%= announcement.comments.size %>
       comments
     <% end %>
-    <%= render(c.toggleable) do %>
+    <%= render(c.with_toggleable) do %>
       <%= render(Comments::Box.new(user: current_user, commentable: announcement, comments: announcement.comments)) %>
     <% end %>
   <% end %>

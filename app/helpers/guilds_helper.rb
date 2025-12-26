@@ -5,7 +5,7 @@ module GuildsHelper
     if guild&.avatar&.attached?
       rails_storage_proxy_path(guild.avatar)
     else
-      image_url("defaultavatar.png")
+      "/images/defaultavatar.png"
     end
   end
 
@@ -13,7 +13,7 @@ module GuildsHelper
     if guild&.banner&.attached?
       rails_storage_proxy_path(guild.banner)
     else
-      image_url("userbanner2.svg")
+      "/images/userbanner2.svg"
     end
   end
 
@@ -21,7 +21,7 @@ module GuildsHelper
     if guild&.badge&.attached?
       rails_storage_proxy_path(guild.badge)
     else
-      image_url("userbanner2.svg")
+      "/images/userbanner2.svg"
     end
   end
 end

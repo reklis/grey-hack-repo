@@ -21,8 +21,8 @@
 
   <%= render(Layout::Modal.new(class: "ml-auto flex items-center")) do |c| %>
     <% c.with_button(class: "link") { "import from string and replace this builds files" } %>
-    <% c.dialog do |cc| %>
-      <% cc.header {"Import project folder"} %>
+    <% c.with_dialog do |cc| %>
+      <% cc.with_header {"Import project folder"} %>
       <% cc.with_body(data: {controller: "fileable-form"}) do %>
         <input class="hidden" data-fileable-form-target="build" value="<%= build.signed_id %>">
         </input>

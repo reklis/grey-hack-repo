@@ -5,10 +5,10 @@
     <% cc.with_header(small: true) do %>
       <%= title %>
     <% end %>
-    <% cc.body do %>
+    <% cc.with_body do %>
       Are you sure?
     <% end %>
-    <% cc.footer do |ccc| %>
+    <% cc.with_footer do |ccc| %>
       <% ccc.with_action(close: true) { "Cancel" } %>
       <% ccc.with_action(**@action_args) { @action_content.call } %>
     <% end %>

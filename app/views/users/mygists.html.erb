@@ -6,23 +6,23 @@
 
 
 <%= render(Layout::Table.new(class: "mb-5")) do |c| %>
-  <% c.head do |cc| %>
-    <% cc.column { "Name" } %>
-    <% cc.column { "Author" } %>
-    <% cc.column { "Actions" } %>
+  <% c.with_head do |cc| %>
+    <% cc.with_column { "Name" } %>
+    <% cc.with_column { "Author" } %>
+    <% cc.with_column { "Actions" } %>
   <% end %>
 
   <% @gists.each do |gist| %>
-    <% c.row do |cc| %>
-      <% cc.column { gist.name } %>
-      <% cc.column { gist.author.name } %>
-      <% cc.column do %>
+    <% c.with_row do |cc| %>
+      <% cc.with_column { gist.name } %>
+      <% cc.with_column { gist.author.name } %>
+      <% cc.with_column do %>
         <div class="flex w-fit ml-auto">
           <%= link_to edit_gist_path(gist), class: "btn btn-info btn-thin p-2 mr-2 flex items-center" do %>
             <%= octicon "pencil", height: 16, class: "fill-current" %>
           <% end %>
           <%= render(Layout::ConfirmationDialog.new(class: "flex")) do |c| %>
-            <% c.title { "Delete " + gist.name } %>
+            <% c.with_title { "Delete " + gist.name } %>
             <% c.with_button(class: "btn btn-danger btn-thin p-2 flex items-center") do %>
               <%= octicon "trash", height: 16, class: "fill-current" %>
             <% end %>
