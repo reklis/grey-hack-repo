@@ -3,70 +3,63 @@
 source "https://rubygems.org"
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby "~> 3.2.2"
+ruby "~> 3.3.0"
 
-gem "rails", "~> 7.0.8"
+gem "rails", ">= 8.0"
+# Pin connection_pool to 2.x due to incompatibility with Rails 8.1.1 redis_cache_store
+# See: https://github.com/mperham/connection_pool/issues/210
+gem "connection_pool", "~> 2.4"
 
-gem "pg", "~> 1.5"
-gem "puma", "~> 6.3"
-gem "turbo-rails", "~> 1.4.0"
-gem "jbuilder", "~> 2.7"
-# Use Active Model has_secure_password
-# gem 'bcrypt', '~> 3.1.7'
+gem "pg"
+gem "puma"
+gem "turbo-rails"
+gem "jbuilder"
 # Use Active Storage variant
-gem "image_processing", "~> 1.2"
+gem "image_processing"
 # Reduces boot times through caching; required in config/boot.rb
-gem "bootsnap", ">= 1.4.4", require: false
+gem "bootsnap", require: false
 # Active storage provider
-gem "aws-sdk-s3", "~> 1.136"
+gem "aws-sdk-s3"
 # Stimulus Reflex
-gem "redis", "~> 4.0", require: ["redis", "redis/connection/hiredis"]
-gem "hiredis", "~> 0.6.3"
-gem "redis-session-store", "~> 0.11.4" # removing this causes sentry params filter to break even though redis sesssion store is disabled
-gem "stimulus_reflex", "= 3.5.0.rc4"
-gem "cable_ready", "= 5.0.3"
+gem "redis"
+gem "hiredis-client"
+gem "redis-session-store" # removing this causes sentry params filter to break even though redis session store is disabled
+gem "stimulus_reflex"
+gem "cable_ready"
 # front end gems
 gem "view_component-form"
-gem "view_component", "~> 2.49"
-gem "simple_form", "~> 5.1"
-gem "meta-tags", "~> 2.16"
-gem "octicons_helper", "~> 19.7"
-gem "pagy", "~> 6.0"
-gem "diffy", "~> 3.4"
-gem "local_time", "~> 2.1"
-gem "futurism", "~> 1.1"
+gem "view_component"
+gem "simple_form"
+gem "meta-tags"
+gem "octicons_helper"
+gem "pagy", "~> 9.0"
+gem "diffy"
+gem "local_time"
+gem "futurism"
 # back end gems
 gem "ahoy_matey"
 gem "blazer"
-gem "shrine", "~> 3.3"
-gem "clockwork", "~> 3.0"
-gem "dry-transaction", "~> 0.15.0"
-gem "pundit", "~> 2.2"
-gem "pghero", "~> 3.3"
-gem "redcarpet", "~> 3.5"
-gem "rpictogrify", "~> 0.5.0"
-gem "amoeba", "~> 3.2"
-gem "omniauth-rails_csrf_protection"
-gem "omniauth-github"
-gem "discord-notifier", "~> 1.0", ">= 1.0.3"
-gem "sidekiq", "~> 7.2"
-gem "devise", "~> 4.8"
-gem "noticed", "~> 1.5"
-gem "friendly_id", "~> 5.5.0"
-gem "rubyzip", "~> 2.3", require: "zip" # required by FileJob
-gem "pay", "~> 6.8"
-# gem "stripe", ">= 8.0", "< 9.0"
+gem "clockwork"
+gem "dry-transaction"
+gem "pundit"
+gem "pghero"
+gem "redcarpet"
+gem "amoeba"
+gem "discord-notifier"
+gem "sidekiq"
+gem "devise"
+gem "noticed"
+gem "friendly_id"
+gem "rubyzip", require: "zip" # required by FileJob
+gem "pay"
 # assets bundling
-# gem "jsbundling-rails", "~> 1.0"
 gem "sprockets-rails"
-# gem "tailwindcss-rails", "~> 2.0"
 gem "vite_rails"
-# gem "cssbundling-rails", "~> 1.0"
 # apm provider
-gem "newrelic_rpm", "~> 9.5"
-gem "sentry-ruby", "~> 5.2"
-gem "sentry-rails", "~> 5.2"
-gem "sentry-sidekiq", "~> 5.3"
+gem "stackprof"
+gem "sentry-ruby"
+gem "sentry-rails"
+gem "sentry-sidekiq"
 
 gem "foreman", require: false
 
@@ -75,22 +68,20 @@ group :development, :test do
   gem "factory_bot_rails"
   gem "faker", git: "https://github.com/faker-ruby/faker.git", branch: "main"
   gem "rails-controller-testing"
-  gem "annotate", git: "https://github.com/ctran/annotate_models.git"
   gem "simplecov"
 end
 
 group :development do
-  gem "web-console", ">= 4.1.0"
-  gem "rack-mini-profiler", "~> 3.1"
-  gem "listen", "~> 3.3"
+  gem "web-console"
+  gem "rack-mini-profiler"
+  gem "listen"
   gem "spring"
-  gem "stackprof", "~> 0.2.19"
   gem "standardrb"
-  gem "rubocop", "~> 1.56.4"
+  gem "rubocop"
 end
 
 group :test do
-  gem "capybara", ">= 3.26"
+  gem "capybara"
   gem "selenium-webdriver"
   gem "webdrivers"
 end

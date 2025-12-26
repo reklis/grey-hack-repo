@@ -2,7 +2,11 @@
 
 module UsersHelper
   def user_avatar(user)
-    (!user&.avatar.blank? && user&.avatar) || (user&.nft_attachment && rails_storage_proxy_path(user&.nft_attachment)) || default_avatar
+    if user&.avatar_image&.attached?
+      rails_storage_proxy_path(user.avatar_image)
+    else
+      default_avatar
+    end
   end
 
   def current_user_avatar

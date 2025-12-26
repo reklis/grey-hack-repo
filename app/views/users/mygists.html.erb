@@ -23,10 +23,10 @@
           <% end %>
           <%= render(Layout::ConfirmationDialog.new(class: "flex")) do |c| %>
             <% c.title { "Delete " + gist.name } %>
-            <% c.button(class: "btn btn-danger btn-thin p-2 flex items-center") do %>
+            <% c.with_button(class: "btn btn-danger btn-thin p-2 flex items-center") do %>
               <%= octicon "trash", height: 16, class: "fill-current" %>
             <% end %>
-            <% c.action(tag: :a, style: "danger", data: {turbo_method: :delete, turbo_frame: "_top"}, href: gist_path(gist)) { "Delete" } %>
+            <% c.with_action(tag: :a, style: "danger", data: {turbo_method: :delete, turbo_frame: "_top"}, href: gist_path(gist)) { "Delete" } %>
           <% end %>
         </div>
       <% end %>

@@ -35,7 +35,7 @@ class User < ApplicationRecord
   pay_customer
   extend FriendlyId
 
-  devise :database_authenticatable, :registerable, :rememberable, :validatable, :confirmable, :recoverable, :omniauthable, omniauth_providers: [:github]
+  devise :database_authenticatable, :registerable, :rememberable, :validatable, :confirmable, :recoverable
   friendly_id :name
 
   validates :name, length: {maximum: 16, minimum: 3}, presence: true, uniqueness: true, format: {with: /(^[\d\w-]*$)/, message: "name can only include letters numbers and _ -"}
@@ -48,15 +48,12 @@ class User < ApplicationRecord
   has_many :stars, dependent: :destroy
   has_many :starable_posts, through: :stars, source: "starable", source_type: "Post"
   has_many :comments, dependent: :destroy
-  has_many :notifications, as: :recipient
+  has_many :notifications, as: :recipient, dependent: :destroy, class_name: "Noticed::Notification"
   has_many :guilds_users, dependent: :destroy
   has_many :member_guilds, through: :guilds_users, source: :guild
   has_one :owner_guild, class_name: "Guild", foreign_key: :user_id, dependent: :destroy
-  has_one_attached :nft, dependent: :destroy
-
-  include ImageUploader::Attachment(:banner)
-
-  after_commit :set_nft, on: [:create]
+  has_one_attached :avatar_image, dependent: :destroy
+  has_one_attached :banner_image, dependent: :destroy
 
   def display_name
     if guild&.tag&.empty? == false
@@ -66,33 +63,11 @@ class User < ApplicationRecord
     end
   end
 
-  def set_nft
-    NftJob.perform_later(self)
-  end
-
   def supporter?
     return true if supporter == true
     set_payment_processor :stripe
     # payment_processor.charges.where(processor_plan: SupporterBadge.price).any?
     payment_processor.charges.any?
-  end
-
-  def self.from_omniauth(auth)
-    where(provider: auth.provider, uid: auth.uid).first_or_create do |user|
-      user.email = auth.info.email
-      user.password = Devise.friendly_token[0, 8]
-      user.name = auth.info.nickname
-      user.avatar = auth.info.image
-
-      user.skip_confirmation!
-    end
-  end
-
-  def link_github(auth)
-    if User.find_by(provider: auth.provider, uid: auth.uid).nil?
-      update(provider: auth.provider, uid: auth.uid)
-      true
-    end
   end
 
   def self.anonymous_user

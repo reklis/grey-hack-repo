@@ -8,23 +8,18 @@
 <% end %>
 
 <%= form_for resource, as: resource_name, url: registration_path(resource_name), builder: DaisyFormBuilder, html: {method: "put", data: {turbo: "false"}} do |f| %>
-  <div class="flex flex-col sm:flex-row" data-controller="avatar-preview">
-    <div class="w-full">
-      <%= f.group :avatar do %>
-        <%= f.text_field :avatar, data: {avatar_preview_target: :input, action: "debounced:input->avatar-preview#update_image"} %>
-      <% end %>
-    </div>
-    <div class="w-full flex flex-col sm:flex-row items-center justify-start order-first sm:order-last sm:px-2">
-      <span class="mr-3 text-beaver-400 text-sm self-start">Preview: </span>
-      <img class="h-16 w-16 border rounded-full mx-auto" data-avatar-preview-target="img" src=""></img>
-    </div>
-  </div>
+  <%= f.group :avatar_image do %>
+    <% if f.object.avatar_image.attached? %>
+      <%= image_tag rails_storage_proxy_path(f.object.avatar_image), class: "h-16 w-16 rounded-full object-cover mb-2" %>
+    <% end %>
+    <%= f.file_field :avatar_image %>
+  <% end %>
 
-  <%= f.group :banner do %>
-    <%= f.hidden_field :banner, value: f.object.cached_banner_data %>
-    <%= image_tag f.object.banner_url, class: "rounded-t h-40 w-full object-cover" if f.object.banner %>
-
-    <%= f.file_field :banner %>
+  <%= f.group :banner_image do %>
+    <% if f.object.banner_image.attached? %>
+      <%= image_tag rails_storage_proxy_path(f.object.banner_image), class: "rounded-t h-40 w-full object-cover mb-2" %>
+    <% end %>
+    <%= f.file_field :banner_image %>
   <% end %>
 
   <%= f.group :email do %>
@@ -52,21 +47,6 @@
   <% end %>
 
   <%= f.submit "Update" %>
-<% end %>
-
-<% if current_user.uid.nil? %>
-  <%= button_to omniauth_authorize_path(resource_name, :github), class: "btn btn-secondary mb-6", data: {turbo: false} do %>
-    <%= octicon "mark-github", class: "fill-current mr-2" %>
-    Link Github
-  <% end %>
-<% else %>
-  <%= render(Layout::ConfirmationDialog.new(class: "flex")) do |c| %>
-    <% c.title { "Unlink github" } %>
-    <% c.button(class: "btn btn-danger btn-sm mb-6") do %>
-      Unlink github account
-    <% end %>
-    <% c.action(tag: :a, style: "danger", href: user_unlink_github_path(current_user), data: {turbo_method: :patch, turbo_frame: "_top"}){ "Unlink" } %>
-  <% end %>
 <% end %>
 
 <%= link_to "Cancel my account",

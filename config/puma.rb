@@ -33,27 +33,22 @@ pidfile ENV.fetch("PIDFILE") { "tmp/pids/server.pid" }
 # processes).
 #
 # workers ENV.fetch("WEB_CONCURRENCY") { 2 }
-workers 1
+# Running in single mode (workers = 0) to reduce memory overhead
+workers 0
 
-# Use the `preload_app!` method when specifying a `workers` number.
-# This directive tells Puma to first boot the application and load code
-# before forking the application. This takes advantage of Copy On Write
-# process behavior so workers use less memory.
-
-preload_app!
-
+# Sidekiq embedded mode for single-process setup
 x = nil
-on_worker_boot do
+on_booted do
   x = Sidekiq.configure_embed do |config|
     # config.logger.level = Logger::DEBUG
     config.queues = %w[default greyrepo_production_default greyrepo_development_default]
     config.concurrency = 1
-    config.redis = {url: ENV.fetch("REDIS_URL", "redis://localhost:6379/1")}
+    config.redis = {url: ENV.fetch("REDIS_SIDEKIQ_URL", "redis://localhost:6379/1")}
   end
   x.run
 end
 
-on_worker_shutdown do
+at_exit do
   x&.stop
 end
 

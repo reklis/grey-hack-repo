@@ -1,6 +1,6 @@
 <div id="build-explorer" data-controller="build-explorer">
   <%= render(Layout::Toggle.new(tag: :div, open: true, id: "build-explorer", class: "overflow-x-hidden flex border border-base-300 rounded")) do |c| %>
-    <%= render(c.toggleable()) do %>
+    <%= render(c.with_toggleable()) do %>
       <%= render(BuildSelector.new(builds: @builds, selected_build: @selected_build)) %>
     <% end %>
 
@@ -8,7 +8,7 @@
       <div id="explorer-content">
         <%= render(FileableExplorer.new(fileable: @selected_build)) %>
         <div class="p-3 flex justify-between">
-          <%= render(c.toggle(tag: :button, class: "btn btn-secondary btn-thin p-2")) do %>
+          <%= render(c.with_toggle(tag: :button, class: "btn btn-secondary btn-thin p-2")) do %>
             <%= octicon "three-bars", class: "fill-current" %>
           <% end %>
 

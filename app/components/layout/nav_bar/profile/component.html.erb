@@ -1,36 +1,36 @@
 <%= render(Layout::Dropdown.new(direction: :left)) do |c| %>
-  <% c.button(tag: :button, class: "btn btn-ghost btn-circle avatar") do %>
+  <% c.with_button(tag: :button, class: "btn btn-ghost btn-circle avatar") do %>
     <div class="w-8 rounded-full">
       <span class="sr-only">Open user menu</span>
       <img src="<%= helpers.user_avatar(@current_user) %>" alt="">
     </div>
   <% end %>
-  <% c.menu(class: "mt-3", compact: true) do |cc| %>
+  <% c.with_menu(class: "mt-3", compact: true) do |cc| %>
     <% if @current_user %>
-      <% cc.item(type: :title) { "Account" } %>
-      <% cc.item(tag: :a, href: user_path(@current_user)) { "Profile" } %>
-      <% cc.item(tag: :a, href: edit_user_registration_path) { "Settings" } %>
-      <% cc.item(tag: :a, href: destroy_user_session_path, data: { turbo_method: "delete" }) { "Sign out" } %>
-      <% cc.item(type: :title) { "Posts" } %>
-      <% cc.item(tag: :a, href: my_posts_path) { "My posts" } %>
-      <% cc.item(tag: :a, href: new_post_path) { "Create a new post" } %>
-      <% cc.item(type: :title) { "Gists" } %>
-      <% cc.item(tag: :a, href: my_gists_path) { "My gists" } %>
-      <% cc.item(tag: :a, href: new_gist_path) { "Create a new gist" } %>
-      <% cc.item(type: :title) { "Guilds" } %>
+      <% cc.with_item(type: :title) { "Account" } %>
+      <% cc.with_item(tag: :a, href: user_path(@current_user)) { "Profile" } %>
+      <% cc.with_item(tag: :a, href: edit_user_registration_path) { "Settings" } %>
+      <% cc.with_item(tag: :a, href: destroy_user_session_path, data: { turbo_method: "delete" }) { "Sign out" } %>
+      <% cc.with_item(type: :title) { "Posts" } %>
+      <% cc.with_item(tag: :a, href: my_posts_path) { "My posts" } %>
+      <% cc.with_item(tag: :a, href: new_post_path) { "Create a new post" } %>
+      <% cc.with_item(type: :title) { "Gists" } %>
+      <% cc.with_item(tag: :a, href: my_gists_path) { "My gists" } %>
+      <% cc.with_item(tag: :a, href: new_gist_path) { "Create a new gist" } %>
+      <% cc.with_item(type: :title) { "Guilds" } %>
       <% if @current_user.guild %>
-        <% cc.item(tag: :a, href: guild_path(@current_user.guild)) { "My guild profile" } %>
+        <% cc.with_item(tag: :a, href: guild_path(@current_user.guild)) { "My guild profile" } %>
         <% if @current_user.guild.admin == @current_user %>
-          <% cc.item(tag: :a, href: edit_guild_path(@current_user.guild)) { "Edit guild" } %>
-          <% cc.item(tag: :a, href: guild_manager_path(@current_user.guild)) { "Manage members" } %>
+          <% cc.with_item(tag: :a, href: edit_guild_path(@current_user.guild)) { "Edit guild" } %>
+          <% cc.with_item(tag: :a, href: guild_manager_path(@current_user.guild)) { "Manage members" } %>
         <% end %>
       <% else %>
-        <% cc.item(tag: :a, href: new_guild_path) { "Create a new guild" } %>
+        <% cc.with_item(tag: :a, href: new_guild_path) { "Create a new guild" } %>
       <% end %>
     <% else %>
-      <% cc.item(tag: :a, href: user_session_path) { "Log in" } %>
-      <% cc.item(tag: :a, href: new_user_registration_path) { "Sign up" } %>
-      <% cc.item(tag: :a, href: new_gist_path) { "Create a new gist" } %>
+      <% cc.with_item(tag: :a, href: user_session_path) { "Log in" } %>
+      <% cc.with_item(tag: :a, href: new_user_registration_path) { "Sign up" } %>
+      <% cc.with_item(tag: :a, href: new_gist_path) { "Create a new gist" } %>
     <% end %>
   <% end %>
 <% end %>

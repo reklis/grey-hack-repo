@@ -26,12 +26,12 @@
   <% end %>
 
   <%= render(Layout::Dropdown.new()) do |c| %>
-    <% c.button(tag: :button, type: "button", class: "btn") do %>
+    <% c.with_button(tag: :button, type: "button", class: "btn") do %>
       attach post
     <% end %>
     <% c.menu do |cc| %>
       <input class="mb-2 input input-bordered w-full" data-attachments-target="input" type="text" placeholder="Enter a post id"></input>
-      <% cc.item(tag: :div, class: "text-center", data: { action: "click->attachments#attach" }) { "Attach" } %>
+      <% cc.with_item(tag: :div, class: "text-center", data: { action: "click->attachments#attach" }) { "Attach" } %>
     <% end %>
   <% end %>
 

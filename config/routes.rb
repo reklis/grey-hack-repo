@@ -24,11 +24,10 @@ Rails.application.routes.draw do
 
   patch "builds/:id/publish", to: "builds#publish", as: "build_publish"
   get "builds/:id/diff", to: "builds#diff", as: "build_diff"
-  devise_for :users, controllers: {sessions: "users/sessions", registrations: "users/registrations", omniauth_callbacks: "users/omniauth_callbacks"}
+  devise_for :users, controllers: {sessions: "users/sessions", registrations: "users/registrations"}
   get "users/:id/posts", to: "users#posts", as: "user_posts"
   get "users/:id", to: "users#show", as: "user"
   get "users", to: "users#index", as: "users"
-  patch "users/:id/unlink_github", to: "users#unlink_github", as: "user_unlink_github"
   get "myposts", to: "users#myposts", as: "my_posts"
   get "mygists", to: "users#mygists", as: "my_gists"
 

@@ -1,11 +1,11 @@
 <div class="nested-form-wrapper mb-6" data-new-record="<%= f.object.new_record? %>">
   <%= content_tag :div, data: {controller: "code-editor", code_editor_language_value: file_extension_to_language(f.object.extension&.to_sym || :txt), code_editor_editorclass_value: "p-2 rounded-b"} do %>
     <%= render Layout::Tabs.new(render_outside: true, active_tab_class: "btn-active") do |c| %>
-      <% c.tab(class: "btn btn-sm ml-2") {"code"} %>
+      <% c.with_tab(class: "btn btn-sm ml-2") {"code"} %>
       <% c.tab_content class: "" do %>
         <%= f.text_area :content, data: {code_editor_target: "editor"} %>
       <% end %>
-      <% c.tab(class: "btn btn-sm ml-2") {"preview"} %>
+      <% c.with_tab(class: "btn btn-sm ml-2") {"preview"} %>
       <% c.tab_content do %>
         <div class="trix-content mb-6" data-code-editor-target="preview">
         </div>

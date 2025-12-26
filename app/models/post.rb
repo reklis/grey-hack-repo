@@ -49,7 +49,7 @@ class Post < ApplicationRecord
   has_many :stars, as: :starable, dependent: :destroy
   has_many :comments, as: :commentable, dependent: :destroy
   has_many :builds, dependent: :destroy
-  enum visibility: [:public, :not_listed, :private], _suffix: true
+  enum :visibility, [:public, :not_listed, :private], suffix: true
   friendly_id :title, use: :slugged
 
   accepts_nested_attributes_for :builds, allow_destroy: true

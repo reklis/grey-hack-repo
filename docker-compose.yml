@@ -15,7 +15,9 @@ services:
     environment:
       RAILS_ENV: production
       DATABASE_URL: postgres://postgres:postgres@db:5432/grey_repo_production
-      REDIS_URL: redis://redis:6379/1
+      REDIS_URL: redis://redis:6379
+      REDIS_CACHE_URL: redis://redis:6379/0
+      REDIS_SIDEKIQ_URL: redis://redis:6379/1
       SECRET_KEY_BASE: 3e363bcd52e247b738b276c17af3d7f467db6af0ac9b7416e64fce3fbb34599163dc5149ce316c0770438e82f2858112788dd47bf81170893f023042119642da
       RAILS_SERVE_STATIC_FILES: "true"
       RAILS_LOG_TO_STDOUT: "true"
@@ -46,7 +48,9 @@ services:
     environment:
       RAILS_ENV: production
       DATABASE_URL: postgres://postgres:postgres@db:5432/grey_repo_production
-      REDIS_URL: redis://redis:6379/1
+      REDIS_URL: redis://redis:6379
+      REDIS_CACHE_URL: redis://redis:6379/0
+      REDIS_SIDEKIQ_URL: redis://redis:6379/1
       SECRET_KEY_BASE: 3e363bcd52e247b738b276c17af3d7f467db6af0ac9b7416e64fce3fbb34599163dc5149ce316c0770438e82f2858112788dd47bf81170893f023042119642da
       DB_POOL: 5
       ACTIVE_STORAGE_SERVICE: minio

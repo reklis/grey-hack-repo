@@ -24,8 +24,7 @@ class Announcement < ApplicationRecord
   belongs_to :user
   belongs_to :guild
   has_many :comments, as: :commentable, dependent: :destroy
-
-  include ImageUploader::Attachment(:media)
+  has_one_attached :media
 
   validates :message, presence: true, length: {minimum: 4, maximum: 700}
 end

@@ -37,16 +37,16 @@ class Guild < ApplicationRecord
   has_many :guilds_users, dependent: :destroy
   has_many :members, through: :guilds_users, source: :user
 
-  enum registration: [:closed, :external], _suffix: true
-  include ImageUploader::Attachment(:avatar)
-  include ImageUploader::Attachment(:banner)
-  include ImageUploader::Attachment(:badge)
+  enum :registration, [:closed, :external], suffix: true
+  has_one_attached :avatar
+  has_one_attached :banner
+  has_one_attached :badge
 
   validates :name, presence: true, length: {minimum: 3, maximum: 32}, uniqueness: true
   validates :description, presence: true, length: {maximum: 230}
   validates :registration_info, length: {maximum: 64}
   validates :tag, length: {maximum: 3, minimum: 3}, uniqueness: true, allow_blank: true
-  enum alignment: [:white, :grey, :black], _suffix: true
+  enum :alignment, [:white, :grey, :black], suffix: true
 
   def all_members
     [admin].push(members.to_a).flatten

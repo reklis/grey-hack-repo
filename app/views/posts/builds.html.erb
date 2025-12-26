@@ -30,15 +30,15 @@
 <div id="fileable-list" class="w-full mx-auto">
   <%= render(Layout::Table.new(class: "#{"!rounded-b-none" if @selected_build}")) do |c| %>
     <% c.head do |cc| %>
-      <% cc.column(class: "!text-left") { "Name" } %>
-      <% cc.column(class: "!text-left") { "Published" } %>
-      <% cc.column(class: "") { "Actions" } %>
+      <% cc.with_column(class: "!text-left") { "Name" } %>
+      <% cc.with_column(class: "!text-left") { "Published" } %>
+      <% cc.with_column(class: "") { "Actions" } %>
     <% end %>
 
     <% @builds.each do |build| %>
       <%= next if defined?(@selected_build) && @selected_build != build %>
       <% selected = @selected_build == build %>
-      <% c.row(class: "#{"bg-primary" if selected}") do |cc| %>
+      <% c.with_row(class: "#{"bg-primary" if selected}") do |cc| %>
         <% cc.column do %>
           <% if selected %>
             <div class="flex flex-col w-fit">
@@ -63,8 +63,8 @@
             <% if build.published == false %>
               <% if build.ready_to_publish? %>
                 <%= render(Layout::Modal.new(tag: :div)) do |c| %>
-                  <% c.button(class: "btn btn-success btn-thin p-2 mr-2", id: "publish-#{build.id}") { "Publish" } %>
-                  <% c.dialog(size: :medium) do |cc| %>
+                  <% c.with_button(class: "btn btn-success btn-thin p-2 mr-2", id: "publish-#{build.id}") { "Publish" } %>
+                  <% c.with_dialog(size: :medium) do |cc| %>
                     <% cc.header { "Publish " + build.name } %>
                     <% cc.body do %>
                       <%= render '/builds/publish_form', build: build %>
@@ -74,8 +74,8 @@
 
                 <%# <%= render(Layout::ConfirmationDialog.new(class: "flex")) do |c| %>
                   <%#   <% c.title { "Publish " + build.name } %>
-                  <%#   <% c.button(class: "btn btn-success btn-thin p-2 mr-2") { "Publish" } %>
-                  <%#   <% c.action(tag: :a, style: "success", href: build_publish_path(build), data: {turbo_method: :patch, turbo_frame: "_top"}){ "Publish" } %>
+                  <%#   <% c.with_button(class: "btn btn-success btn-thin p-2 mr-2") { "Publish" } %>
+                  <%#   <% c.with_action(tag: :a, style: "success", href: build_publish_path(build), data: {turbo_method: :patch, turbo_frame: "_top"}){ "Publish" } %>
                   <%# <% end %>
               <% else %>
                 <span class="btn btn-disabled btn-thin p-2 mr-2">
@@ -99,10 +99,10 @@
             <% end %>
             <%= render(Layout::ConfirmationDialog.new(class: "flex")) do |c| %>
               <% c.title { "Delete " + build.name } %>
-              <% c.button(class: "btn btn-danger btn-thin p-2 mr-2") do %>
+              <% c.with_button(class: "btn btn-danger btn-thin p-2 mr-2") do %>
                 <%= octicon "trash", height: 16, class: "fill-current" %>
               <% end %>
-              <% c.action(tag: :a, style: "danger", href: build_path(build), data: {turbo_method: :delete, turbo_frame: "_top"}){ "Delete" } %>
+              <% c.with_action(tag: :a, style: "danger", href: build_path(build), data: {turbo_method: :delete, turbo_frame: "_top"}){ "Delete" } %>
             <% end %>
           </div>
         <% end %>
@@ -112,13 +112,13 @@
     <% if @selected_build.nil? %>
 
       <% c.row do |cc| %>
-        <% cc.column(colspan: 999, class: "p-0") do %>
+        <% cc.with_column(colspan: 999, class: "p-0") do %>
           <%= render(Pagination.new(pagy: @pagy)) if @pagy %>
         <% end %>
       <% end %>
 
       <% c.foot do |cc| %>
-        <% cc.column(colspan: 999) do %>
+        <% cc.with_column(colspan: 999) do %>
           <button class="btn btn-info btn-thin px-2 float-right" data-reflex="click->FileableForm::Reflex#add_build" data-post-id="<%= @post.signed_id %>">
             Add Build
           </button>
@@ -134,7 +134,7 @@
         <% cc.column { "Build files" } %>
       <% end %>
       <% c.row do |cc| %>
-        <% cc.column(class: "!p-0") do %>
+        <% cc.with_column(class: "!p-0") do %>
           <%= render(BuildEditor.new(build: @selected_build, file: @selected_file)) %>
         <% end %>
       <% end %>

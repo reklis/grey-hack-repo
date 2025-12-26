@@ -20,10 +20,10 @@
   </div>
 
   <%= render(Layout::Modal.new(class: "ml-auto flex items-center")) do |c| %>
-    <% c.button(class: "link") { "import from string and replace this builds files" } %>
+    <% c.with_button(class: "link") { "import from string and replace this builds files" } %>
     <% c.dialog do |cc| %>
       <% cc.header {"Import project folder"} %>
-      <% cc.body(data: {controller: "fileable-form"}) do %>
+      <% cc.with_body(data: {controller: "fileable-form"}) do %>
         <input class="hidden" data-fileable-form-target="build" value="<%= build.signed_id %>">
         </input>
         <p>paste the output of <a class="link" href="https://www.greyrepo.xyz/posts/folder-parser">grparser</a> export string in the field bellow.</p>

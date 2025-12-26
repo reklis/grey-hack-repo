@@ -2,6 +2,8 @@
 
 module ApplicationHelper
   include UsersHelper
+  include GuildsHelper
+  include AnnouncementsHelper
   include ScriptsHelper
   include Pagy::Frontend
 

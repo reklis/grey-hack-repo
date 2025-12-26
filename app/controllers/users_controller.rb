@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class UsersController < ApplicationController
-  before_action :authenticate_user!, only: [:myposts, :unlink_github]
+  before_action :authenticate_user!, only: [:myposts]
 
   def index
     authorize User
@@ -65,10 +65,4 @@ class UsersController < ApplicationController
     render(Users::PostsBox.new(user: @user, current_user: current_user, posts: @posts, pagy: @category_pagy, active_tab: @category), layout: false)
   end
 
-  def unlink_github
-    authorize User
-
-    current_user.update(uid: nil, provider: nil)
-    redirect_back fallback_location: root_path, notice: "Github account unlinked"
-  end
 end

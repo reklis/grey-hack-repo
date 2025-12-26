@@ -12,7 +12,7 @@ Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
   # Code is not reloaded between requests.
-  config.cache_classes = true
+  config.enable_reloading = false
 
   # Eager load code on boot. This eager loads most of Rails and
   # your application in memory, allowing both threaded web servers
@@ -31,7 +31,6 @@ Rails.application.configure do
   # Disable serving static files from the `/public` folder by default since
   # Apache or NGINX already handles this.
   config.public_file_server.enabled = true
-  config.serve_static_assets = true
 
   # Compress CSS using a preprocessor.
   # config.assets.css_compressor = :sass
@@ -77,9 +76,24 @@ Rails.application.configure do
   #     key_prefix: "app:session:",
   #     url: ENV["REDIS_URL_RED"]
   #   }
-  config.cache_store = :redis_cache_store, {url: ENV["REDIS_URL"]}
-  # config.cache_store = :file_store, "#{root}/tmp/cache"
-  config.session_store = :cookie_store
+  # Redis cache store on db 0 (Sidekiq jobs use db 1)
+  # Fall back to memory store during asset precompilation when Redis isn't available
+  if ENV["REDIS_CACHE_URL"].present?
+    config.cache_store = :redis_cache_store, {
+      url: ENV["REDIS_CACHE_URL"],
+      namespace: "cache",
+      expires_in: 1.day,
+      connect_timeout: 1,
+      read_timeout: 1,
+      write_timeout: 1,
+      error_handler: ->(method:, returning:, exception:) {
+        Rails.logger.error("Redis cache error: #{exception.class} - #{exception.message}")
+      }
+    }
+  else
+    config.cache_store = :memory_store
+  end
+  config.session_store :cookie_store
 
   # Use a real queuing backend for Active Job (and separate queues per environment).
   # config.active_job.queue_adapter     = :resque

@@ -13,12 +13,3 @@
 <% if devise_mapping.confirmable? && controller_name != 'confirmations' %>
   <%= link_to "Resend email confirmation", new_confirmation_path(resource_name), class: "btn btn-sm btn-block btn-secondary w-fit mb-2 whitespace-nowrap flex-nowrap" %><br>
 <% end %>
-
-<% if devise_mapping.omniauthable? && respond_to?(:omniauth_authorize_path) %>
-  <% resource_class.omniauth_providers.each do |provider| %>
-    <%= button_to omniauth_authorize_path(resource_name, provider), class: "btn btn-sm btn-secondary whitespace-nowrap flex-nowrap", data: {turbo: false} do %>
-      <%= octicon "mark-github", class: "fill-current mr-2" %>
-      Sign in with <%= provider.capitalize %>
-    <% end %>
-  <% end %>
-<% end %>

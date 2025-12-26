@@ -15,12 +15,12 @@
   </div>
   <% if @edit %>
     <%= render(Layout::Dropdown.new(class: "inline-block  relative")) do |c| %>
-      <% c.button(class: "p-3 whitespace-nowrap border-l cursor-pointer button_primary border-beaver-850") do %>
+      <% c.with_button(class: "p-3 whitespace-nowrap border-l cursor-pointer button_primary border-beaver-850") do %>
         Add file
       <% end %>
       <% c.menu do |cc| %>
-        <% cc.item(data: {reflex: "click->Posts::BuildsCard::FileableList::ComponentReflex#add_folder_file", index: @index, type: "script"}) { "Add script" } %>
-        <% cc.item(data: {reflex: "click->Posts::BuildsCard::FileableList::ComponentReflex#add_folder_file", index: @index, type: "folder"}) { "Add folder" } %>
+        <% cc.with_item(data: {reflex: "click->Posts::BuildsCard::FileableList::ComponentReflex#add_folder_file", index: @index, type: "script"}) { "Add script" } %>
+        <% cc.with_item(data: {reflex: "click->Posts::BuildsCard::FileableList::ComponentReflex#add_folder_file", index: @index, type: "folder"}) { "Add folder" } %>
       <% end %>
     <% end %>
     <div class="p-3 border-l cursor-pointer button_info border-beaver-850"

@@ -31,19 +31,19 @@ class CommentTest < ActiveSupport::TestCase
 
   test "creating a comment will create a new notification" do
     @comment.save
-    refute_empty Notification.where(params: {comment: @comment})
+    refute_empty Noticed::Event.where(record: @comment)
   end
 
   test "deleting a comment will delete its notifications" do
     @comment.save
-    refute_empty Notification.where(params: {comment: @comment})
+    refute_empty Noticed::Event.where(record: @comment)
     @comment.destroy
-    assert_empty Notification.where(params: {comment: @comment})
+    assert_empty Noticed::Event.where(record: @comment)
   end
 
   test "if the comment user is equal to the commentable user it should not create a notification" do
     @comment.user = @comment.commentable.user
     @comment.save
-    assert_empty Notification.where(params: {comment: @comment})
+    assert_empty Noticed::Event.where(record: @comment)
   end
 end

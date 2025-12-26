@@ -36,11 +36,11 @@ class Comment < ApplicationRecord
   private
 
   def notify_user
-    CommentNotification.with(comment: self).deliver(commentable.user) if commentable.user != user
-    CommentNotification.with(comment: self).deliver(response.user) if response
+    CommentNotifier.with(record: self).deliver(commentable.user) if commentable.user != user
+    CommentNotifier.with(record: self).deliver(response.user) if response
   end
 
   def remove_notification
-    Notification.where(params: {comment: self}).destroy_all
+    Noticed::Event.where(record: self).destroy_all
   end
 end

@@ -1,4 +1,4 @@
-FROM ruby:3.2.2-slim as base
+FROM ruby:3.3-slim AS base
 
 WORKDIR /rails
 
@@ -11,13 +11,13 @@ ENV RAILS_ENV="production" \
 RUN gem update --system --no-document && \
     gem install -N bundler
 
-FROM base as build
+FROM base AS build
 
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y build-essential curl git libpq-dev libvips node-gyp pkg-config python-is-python3
+    apt-get install --no-install-recommends -y build-essential curl git libpq-dev libvips libyaml-dev node-gyp pkg-config python-is-python3
 
-ARG NODE_VERSION=18.2.0
-ARG YARN_VERSION=1.22.19
+ARG NODE_VERSION=24.12.0
+ARG YARN_VERSION=1.22.22
 ENV PATH=/usr/local/node/bin:$PATH
 RUN curl -sL https://github.com/nodenv/node-build/archive/master.tar.gz | tar xz -C /tmp/ && \
     /tmp/node-build-master/bin/node-build "${NODE_VERSION}" /usr/local/node && \

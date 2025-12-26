@@ -13,7 +13,6 @@ class ApplicationController < ActionController::Base
   rescue_from Pundit::AuthorizationNotPerformedError, with: :user_not_logged
 
   before_action :configure_permitted_parameters, if: :devise_controller?
-  newrelic_ignore_enduser
 
   def render_not_found
     render file: "public/404.html", status: 404, layout: false
@@ -34,6 +33,6 @@ class ApplicationController < ActionController::Base
   def configure_permitted_parameters
     devise_parameter_sanitizer.permit(:sign_up, keys: [:name, :email])
     devise_parameter_sanitizer.permit(:sign_in, keys: [:name])
-    devise_parameter_sanitizer.permit(:account_update, keys: [:btc, :bank, :email, :avatar, :banner])
+    devise_parameter_sanitizer.permit(:account_update, keys: [:btc, :bank, :email, :avatar_image, :banner_image])
   end
 end

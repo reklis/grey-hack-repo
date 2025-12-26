@@ -1,8 +1,8 @@
 <%= render(Layout::Dropdown.new(direction: :left)) do |c| %>
-  <% c.button(tag: :button, type: "button", class: "btn btn-ghost mr-4", id: "notifications_button") do %>
+  <% c.with_button(tag: :button, type: "button", class: "btn btn-ghost mr-4", id: "notifications_button") do %>
     <%= octicon "#{@notifications.empty? && @invites.empty? ? "bell" : "bell-fill"}", class: "fill-current", height: 20 %>
   <% end %>
-  <% c.menu(card: true, compact: true, class: "mt-3 w-64 p-0", id: "notifications_menu") do |cc| %>
+  <% c.with_menu(card: true, compact: true, class: "mt-3 w-64 p-0", id: "notifications_menu") do |cc| %>
     <div class="card-body">
       <h3 class="card-title text-base-content/70">Notifications</h3>
       <% if @notifications.empty? && @invites.empty? %>
@@ -29,9 +29,9 @@
               <p><%= notification.message %></p>
             </div>
             <div class="card-actions justify-end">
-              <a href="<%= polymorphic_path(notification.params[:comment].commentable) %>" class="btn btn-sm">Open</a>
+              <a href="<%= polymorphic_path(notification.event.record.commentable) %>" class="btn btn-sm">Open</a>
               <button class="btn btn-sm"
-                      data-id="<%= notification.record.id %>"
+                      data-id="<%= notification.id %>"
                       data-reflex="click->NotificationsReflex#dismiss"
                       data-reflex-root="#notifications_menu #notifications_button">
                       Dismiss
