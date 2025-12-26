@@ -144,22 +144,15 @@ Rails.application.configure do
   # config.active_record.database_resolver_context = ActiveRecord::Middleware::DatabaseSelector::Resolver::Session
 
   config.action_mailer.delivery_method = :smtp
-  config.action_mailer.smtp_settings = if ENV["SMTP_ADDRESS"]
-    {
-      address: ENV["SMTP_ADDRESS"],
-      port: ENV.fetch("SMTP_PORT", 1025).to_i
-    }
-  else
-    {
-      user_name: "apikey",
-      password: ENV["SENDGRID_API_KEY"],
-      domain: "greyrepo.xyz",
-      address: "smtp.sendgrid.net",
-      port: 587,
-      authentication: :plain,
-      enable_starttls_auto: true
-    }
-  end
+  config.action_mailer.smtp_settings = {
+    address: ENV.fetch("SMTP_ADDRESS", "smtp.greyrepo.xyz"),
+    port: ENV.fetch("SMTP_PORT", 587).to_i,
+    user_name: ENV["SMTP_USERNAME"],
+    password: ENV["SMTP_PASSWORD"],
+    domain: ENV.fetch("SMTP_DOMAIN", "greyrepo.xyz"),
+    authentication: ENV.fetch("SMTP_AUTHENTICATION", "plain").to_sym,
+    enable_starttls_auto: ENV.fetch("SMTP_STARTTLS", "true") == "true"
+  }
 
   config.action_mailer.default_url_options = {host: ENV.fetch("APP_HOST", "www.greyrepo.xyz")}
   config.action_controller.default_url_options = {host: ENV.fetch("APP_HOST", "www.greyrepo.xyz")}
