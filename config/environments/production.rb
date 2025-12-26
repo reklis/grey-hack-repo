@@ -147,12 +147,15 @@ Rails.application.configure do
   config.action_mailer.smtp_settings = {
     address: ENV.fetch("SMTP_ADDRESS", "smtp.greyrepo.xyz"),
     port: ENV.fetch("SMTP_PORT", 587).to_i,
-    user_name: ENV["SMTP_USERNAME"],
-    password: ENV["SMTP_PASSWORD"],
     domain: ENV.fetch("SMTP_DOMAIN", "greyrepo.xyz"),
-    authentication: ENV.fetch("SMTP_AUTHENTICATION", "plain").to_sym,
     enable_starttls_auto: ENV.fetch("SMTP_STARTTLS", "true") == "true"
-  }
+  }.tap do |settings|
+    if ENV["SMTP_USERNAME"].present?
+      settings[:user_name] = ENV["SMTP_USERNAME"]
+      settings[:password] = ENV["SMTP_PASSWORD"]
+      settings[:authentication] = ENV.fetch("SMTP_AUTHENTICATION", "plain").to_sym
+    end
+  end
 
   config.action_mailer.default_url_options = {host: ENV.fetch("APP_HOST", "www.greyrepo.xyz")}
   config.action_controller.default_url_options = {host: ENV.fetch("APP_HOST", "www.greyrepo.xyz")}

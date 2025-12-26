@@ -25,6 +25,8 @@ services:
       APP_HOST: localhost:3000
       SMTP_ADDRESS: mailpit
       SMTP_PORT: 1025
+      SMTP_DOMAIN: greyrepo.xyz
+      SMTP_STARTTLS: "false"
     volumes:
       - rails_storage:/rails/storage
     restart: unless-stopped
@@ -52,6 +54,8 @@ services:
       APP_HOST: localhost:3000
       SMTP_ADDRESS: mailpit
       SMTP_PORT: 1025
+      SMTP_DOMAIN: greyrepo.xyz
+      SMTP_STARTTLS: "false"
     volumes:
       - rails_storage:/rails/storage
     restart: unless-stopped

@@ -16,7 +16,7 @@
             <%= render(Builds::ExportStringModal.new build: @selected_build, class: "btn btn-sm whitespace-nowrap mx-2") %>
 
             <% if @selected_build.files_attachment %>
-              <%= link_to "Download build", rails_blob_path(@selected_build.files_attachment, disposition: "attachment"), class: "whitespace-nowrap text-ellipsis btn btn-success btn-sm", rel: "noopener noreferrer", target: "_blank"  %>
+              <%= link_to "Download build", rails_storage_proxy_path(@selected_build.files_attachment, disposition: "attachment"), class: "whitespace-nowrap text-ellipsis btn btn-success btn-sm", data: { turbo: false } %>
             <% end %>
           </div>
         </div>
