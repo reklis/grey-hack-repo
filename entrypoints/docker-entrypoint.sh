@@ -17,5 +17,6 @@ fi
 # bundle exec rails assets:precompile
 
 bundle exec rails db:prepare
+bundle exec rails db:migrate
 
 bundle exec rails s -b 0.0.0.0

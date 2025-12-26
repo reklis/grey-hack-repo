@@ -49,6 +49,10 @@ Rails.application.configure do
   # Store uploaded files on the local file system (see config/storage.yml for options).
   config.active_storage.service = ENV.fetch("ACTIVE_STORAGE_SERVICE", "amazon").to_sym
 
+  # Proxy Active Storage files through Rails instead of redirecting to S3/minio directly
+  # This allows minio to remain internal to the Docker network
+  config.active_storage.resolve_model_to_route = :rails_storage_proxy
+
   # Mount Action Cable outside main process or domain.
   # config.action_cable.mount_path = nil
   # config.action_cable.url = "wss://www.greyrepo.xyz/cable"
