@@ -2,7 +2,7 @@
 
 module GuildsHelper
   def guild_avatar(guild)
-    if guild&.avatar&.attached?
+    if guild&.avatar&.attached? && guild.avatar.blob.persisted?
       rails_storage_proxy_path(guild.avatar)
     else
       "/images/defaultavatar.png"
@@ -10,7 +10,7 @@ module GuildsHelper
   end
 
   def guild_banner(guild)
-    if guild&.banner&.attached?
+    if guild&.banner&.attached? && guild.banner.blob.persisted?
       rails_storage_proxy_path(guild.banner)
     else
       "/images/userbanner2.svg"
@@ -18,7 +18,7 @@ module GuildsHelper
   end
 
   def guild_badge(guild)
-    if guild&.badge&.attached?
+    if guild&.badge&.attached? && guild.badge.blob.persisted?
       rails_storage_proxy_path(guild.badge)
     else
       "/images/userbanner2.svg"

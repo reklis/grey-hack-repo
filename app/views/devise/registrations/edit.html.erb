@@ -9,14 +9,14 @@
 
 <%= form_for resource, as: resource_name, url: registration_path(resource_name), builder: DaisyFormBuilder, html: {method: "put", data: {turbo: "false"}} do |f| %>
   <%= f.group :avatar_image do %>
-    <% if f.object.avatar_image.attached? %>
+    <% if f.object.avatar_image.attached? && f.object.avatar_image.blob.persisted? %>
       <%= image_tag rails_storage_proxy_path(f.object.avatar_image), class: "h-16 w-16 rounded-full object-cover mb-2" %>
     <% end %>
     <%= f.file_field :avatar_image %>
   <% end %>
 
   <%= f.group :banner_image do %>
-    <% if f.object.banner_image.attached? %>
+    <% if f.object.banner_image.attached? && f.object.banner_image.blob.persisted? %>
       <%= image_tag rails_storage_proxy_path(f.object.banner_image), class: "rounded-t h-40 w-full object-cover mb-2" %>
     <% end %>
     <%= f.file_field :banner_image %>

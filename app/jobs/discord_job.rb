@@ -7,6 +7,7 @@ class DiscordJob < ApplicationJob
 
   def perform(obj)
     return if Rails.env != "production"
+    return if Rails.application.credentials[:discord_url].blank?
 
     announce_build(obj) if obj.instance_of?(Build)
     announce_post(obj) if obj.instance_of?(Post)

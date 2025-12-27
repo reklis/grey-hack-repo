@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class UsersController < ApplicationController
-  before_action :authenticate_user!, only: [:myposts]
+  before_action :authenticate_user!, only: [:myposts, :mygists]
 
   def index
     authorize User

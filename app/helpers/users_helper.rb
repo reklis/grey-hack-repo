@@ -2,7 +2,7 @@
 
 module UsersHelper
   def user_avatar(user)
-    if user&.avatar_image&.attached?
+    if user&.avatar_image&.attached? && user.avatar_image.blob.persisted?
       rails_storage_proxy_path(user.avatar_image)
     else
       default_avatar

@@ -53,3 +53,5 @@ node_modules
 
 .playwright-mcp
 test-results
+playwright-report
+e2e/results
