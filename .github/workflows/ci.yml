@@ -68,6 +68,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Download wordlist
+        run: |
+          mkdir -p wordlists
+          curl -L -o wordlists/precomputed_hashes.txt "https://greyhackrepo.us-iad-10.linodeobjects.com/wordlists%2Fprecomputed_hashes.txt"
+
       - name: Install Ruby and gems
         uses: ruby/setup-ruby@v1
         with:
