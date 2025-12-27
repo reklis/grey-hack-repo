@@ -76,6 +76,7 @@ group :development do
   gem "rack-mini-profiler"
   gem "listen"
   gem "spring"
+  gem "standard", ">= 1.35.1"
   gem "standardrb"
   gem "rubocop"
 end
