@@ -51,7 +51,7 @@ A community-driven scripts repository for the [Grey Hack](https://store.steampow
 - PostgreSQL 14+
 - Redis 7+
 - Node.js 20+
-- Yarn or npm
+- Yarn
 
 ## Quick Start with Docker
 
@@ -59,8 +59,8 @@ The fastest way to run Grey Repo locally:
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-org/greyrepo.xyz.git
-cd greyrepo.xyz
+git clone https://github.com/reklis/grey-hack-repo.git
+cd grey-hack-repo
 
 # Start all services
 docker compose up -d
@@ -90,7 +90,7 @@ devbox shell
 
 # Install dependencies
 bundle install
-npm install
+yarn install
 
 # Setup database
 rails db:create && rails db:migrate && rails db:seed
@@ -104,7 +104,7 @@ bin/dev
 1. **Install dependencies:**
    ```bash
    bundle install
-   npm install
+   yarn install
    ```
 
 2. **Start PostgreSQL and Redis:**
@@ -156,29 +156,29 @@ Grey Repo uses Playwright for comprehensive E2E testing covering authentication,
 cd e2e
 
 # Install dependencies and browsers
-npm install
-npx playwright install --with-deps chromium
+yarn install
+yarn playwright install --with-deps chromium
 
 # Run tests (requires running Rails server)
-npm test
+yarn test
 
 # Run with browser visible
-npm run test:headed
+yarn test:headed
 
 # Run specific test suite
-npm run test:auth
-npm run test:posts
-npm run test:gists
-npm run test:guilds
+yarn test:auth
+yarn test:posts
+yarn test:gists
+yarn test:guilds
 
 # Interactive UI mode
-npm run test:ui
+yarn test:ui
 
 # Debug mode
-npm run test:debug
+yarn test:debug
 
 # View test report
-npm run report
+yarn report
 ```
 
 ### Linting
@@ -349,7 +349,7 @@ Authenticated admin users have access to:
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Run tests (`rails test && cd e2e && npm test`)
+3. Run tests (`rails test && cd e2e && yarn test`)
 4. Run linters (`bundle exec standardrb --fix .`)
 5. Commit your changes
 6. Push to the branch
