@@ -42,20 +42,6 @@ jobs:
           - "8025:8025"
           - "1025:1025"
 
-      minio:
-        image: bitnami/minio:latest
-        ports:
-          - "9000:9000"
-          - "9001:9001"
-        env:
-          MINIO_ROOT_USER: minioaccess
-          MINIO_ROOT_PASSWORD: miniosecret
-        options: >-
-          --health-cmd "curl -f http://localhost:9000/minio/health/live"
-          --health-interval 10s
-          --health-timeout 10s
-          --health-retries 10
-
     env:
       RAILS_ENV: test
       DATABASE_URL: "postgres://postgres:password@localhost:5432/greyrepo_test"
@@ -81,7 +67,7 @@ jobs:
       - name: Install Ruby and gems
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.2'
+          ruby-version: '3.3'
           bundler-cache: true
 
       - name: Setup Node.js
@@ -93,6 +79,19 @@ jobs:
 
       - name: Install root Node dependencies
         run: npm ci
+
+      - name: Start MinIO
+        run: |
+          docker run -d --name minio \
+            -p 9000:9000 -p 9001:9001 \
+            -e MINIO_ROOT_USER=minioaccess \
+            -e MINIO_ROOT_PASSWORD=miniosecret \
+            minio/minio:latest server /data --console-address ":9001"
+          sleep 5
+          until curl -sf http://localhost:9000/minio/health/live; do
+            echo "Waiting for MinIO..."
+            sleep 2
+          done
 
       - name: Setup MinIO bucket
         run: |
@@ -162,8 +161,10 @@ jobs:
             e2e/test-results/
           retention-days: 7
 
-      - name: Stop Rails server and Sidekiq
+      - name: Stop Rails server, Sidekiq, and MinIO
         if: always()
         run: |
           pkill -f "rails server" || true
           pkill -f "sidekiq" || true
+          docker stop minio || true
+          docker rm minio || true
