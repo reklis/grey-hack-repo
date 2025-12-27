@@ -20,7 +20,7 @@ class DiscordJob < ApplicationJob
 
     url = post_url(post, only_path: false, host: "www.greyrepo.xyz")
 
-    Discord::Notifier.message("new post published: #{url}")
+    Discord::Notifier.message("new post published: #{url}", url: discord_webhook_url)
   end
 
   def announce_build(build)
@@ -28,6 +28,10 @@ class DiscordJob < ApplicationJob
 
     url = post_url(build.post, only_path: false, host: "www.greyrepo.xyz")
 
-    Discord::Notifier.message("new #{build.post.title} build #{build.name} published: #{url}")
+    Discord::Notifier.message("new #{build.post.title} build #{build.name} published: #{url}", url: discord_webhook_url)
+  end
+
+  def discord_webhook_url
+    Rails.application.credentials[:discord_url]
   end
 end
