@@ -106,9 +106,6 @@ jobs:
           bin/rails db:prepare
           bin/rails db:migrate
 
-      - name: Seed test data
-        run: bin/rails db:seed
-
       - name: Build assets
         run: bundle exec rails assets:precompile
 
