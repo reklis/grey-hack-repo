@@ -12,6 +12,7 @@ gem "connection_pool", "~> 2.4"
 
 gem "pg"
 gem "puma"
+gem "stringio"
 gem "turbo-rails"
 gem "jbuilder"
 # Use Active Storage variant

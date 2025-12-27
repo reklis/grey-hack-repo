@@ -4,11 +4,21 @@
     "bundler@latest",
     "postgresql@latest",
     "libpq@latest",
-    "ruby_3_3@latest"
+    "ruby_3_3@latest",
+    "openssl@latest",
+    "openssl.dev",
+    "libyaml@latest",
+    "libyaml.dev",
+    "pkg-config@latest",
+    "gnumake@latest",
+    "gcc@latest"
   ],
   "shell": {
     "init_hook": [
-      "echo 'Welcome to devbox!' > /dev/null"
+      "export OPENSSL_DIR=$DEVBOX_PACKAGES_DIR",
+      "export LIBRARY_PATH=$DEVBOX_PACKAGES_DIR/lib:$LIBRARY_PATH",
+      "export C_INCLUDE_PATH=$DEVBOX_PACKAGES_DIR/include:$C_INCLUDE_PATH",
+      "export PKG_CONFIG_PATH=$DEVBOX_PACKAGES_DIR/lib/pkgconfig:$PKG_CONFIG_PATH"
     ],
     "scripts": {
       "test": [

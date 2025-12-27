@@ -566,6 +566,7 @@ DEPENDENCIES
   standard (>= 1.35.1)
   standardrb
   stimulus_reflex
+  stringio
   turbo-rails
   tzinfo-data
   view_component
