@@ -41,10 +41,20 @@ Rails.application.configure do
 
   config.action_mailer.perform_caching = false
 
-  # Tell Action Mailer not to deliver emails to the real world.
-  # The :test delivery method accumulates sent emails in the
-  # ActionMailer::Base.deliveries array.
-  config.action_mailer.delivery_method = :test
+  # Use SMTP for E2E tests (Mailpit), otherwise use :test
+  if ENV["SMTP_ADDRESS"].present?
+    config.action_mailer.delivery_method = :smtp
+    config.action_mailer.smtp_settings = {
+      address: ENV["SMTP_ADDRESS"],
+      port: ENV.fetch("SMTP_PORT", 1025).to_i,
+      domain: ENV.fetch("SMTP_DOMAIN", "localhost"),
+      enable_starttls_auto: ENV["SMTP_STARTTLS"] == "true"
+    }
+  else
+    # The :test delivery method accumulates sent emails in the
+    # ActionMailer::Base.deliveries array.
+    config.action_mailer.delivery_method = :test
+  end
 
   # Print deprecation notices to the stderr.
   config.active_support.deprecation = :stderr
