@@ -32,6 +32,7 @@ end
 class Build < ApplicationRecord
   belongs_to :post
   include Fileable
+
   has_one_attached :files
 
   validates_with BuildValidator

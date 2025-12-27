@@ -32,6 +32,6 @@ class EncoderTest < ActiveSupport::TestCase
   end
 
   test "decode should decode" do
-    input = "93L4»4Y�´��J§a11W�c3�mu"
+    "93L4»4Y�´��J§a11W�c3�mu"
   end
 end

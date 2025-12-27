@@ -78,8 +78,8 @@ Rails.application.configure do
   #   }
   # Redis cache store on db 0 (Sidekiq jobs use db 1)
   # Fall back to memory store during asset precompilation when Redis isn't available
-  if ENV["REDIS_CACHE_URL"].present?
-    config.cache_store = :redis_cache_store, {
+  config.cache_store = if ENV["REDIS_CACHE_URL"].present?
+    [:redis_cache_store, {
       url: ENV["REDIS_CACHE_URL"],
       namespace: "cache",
       expires_in: 1.day,
@@ -89,9 +89,9 @@ Rails.application.configure do
       error_handler: ->(method:, returning:, exception:) {
         Rails.logger.error("Redis cache error: #{exception.class} - #{exception.message}")
       }
-    }
+    }]
   else
-    config.cache_store = :memory_store
+    :memory_store
   end
   config.session_store :cookie_store
 
@@ -128,7 +128,7 @@ Rails.application.configure do
   # config.logger = ActiveSupport::TaggedLogging.new(Syslog::Logger.new 'app-name')
 
   if ENV["RAILS_LOG_TO_STDOUT"].present?
-    logger = ActiveSupport::Logger.new(STDOUT)
+    logger = ActiveSupport::Logger.new($stdout)
     logger.formatter = config.log_formatter
     config.logger = ActiveSupport::TaggedLogging.new(logger)
   end

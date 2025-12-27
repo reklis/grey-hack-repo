@@ -9,12 +9,11 @@ class GreyParser::Encoder
   @@char_set.flatten!
 
   def self.divide(s, n)
-    offset = 0
     r = []
 
     loop do
       r << s[0...n]
-      s = s[n..-1]
+      s = s[n..]
 
       break if s.blank?
     end

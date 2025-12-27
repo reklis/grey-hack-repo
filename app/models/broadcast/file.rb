@@ -3,6 +3,7 @@ module Broadcast
     include Rails.application.routes.url_helpers
     include ActionView::RecordIdentifier
     include CableReady::Broadcaster
+
     attr_reader :file, :build, :file_tree_dom_id, :stream_id
 
     def self.morph(file:)

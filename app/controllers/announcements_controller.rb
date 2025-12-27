@@ -25,7 +25,7 @@ class AnnouncementsController < ApplicationController
                 locals: {announcement: Announcement.new(guild: @announcement.guild)}
               ),
               turbo_stream.replace(
-                dom_id(@announcement.guild, "announcements")[1..-1],
+                dom_id(@announcement.guild, "announcements")[1..],
                 partial: "/announcements/list",
                 locals: {guild: @announcement.guild}
               )
@@ -47,7 +47,7 @@ class AnnouncementsController < ApplicationController
         format.turbo_stream do
           render(
             turbo_stream: turbo_stream.replace(
-              dom_id(@announcement)[1..-1],
+              dom_id(@announcement)[1..],
               partial: "/announcements/announcement",
               locals: {announcement: @announcement}
             )
@@ -65,7 +65,7 @@ class AnnouncementsController < ApplicationController
 
     @announcement.destroy
     respond_to do |format|
-      format.turbo_stream { render turbo_stream: turbo_stream.remove(dom_id(@announcement)[1..-1]) }
+      format.turbo_stream { render turbo_stream: turbo_stream.remove(dom_id(@announcement)[1..]) }
       format.html { redirect_to guild_path(@announcement.guild), status: :see_other, notice: "Announcement was successfully destroyed." }
     end
   end

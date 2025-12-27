@@ -5,6 +5,6 @@ class Posts::Card < ApplicationComponent
     @current_user = current_user
     @post = post
     # @build = @post.builds.published.last
-    @build = @post.builds.select(&:published).sort_by(&:created_at).last
+    @build = @post.builds.select(&:published).max_by(&:created_at)
   end
 end

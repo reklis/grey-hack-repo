@@ -17,7 +17,7 @@ class Daisy::Form::GroupComponent < ViewComponent::Form::FieldComponent
 
   def required?
     return @required if @required.nil? == false
-    super()
+    super
   end
 
   def label

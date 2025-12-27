@@ -11,6 +11,23 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Ruby and gems
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+
+      - name: Run StandardRB
+        run: bundle exec standardrb
+
   test:
     runs-on: ubuntu-latest
     timeout-minutes: 30
@@ -176,7 +193,7 @@ jobs:
           docker rm minio || true
 
   build:
-    needs: test
+    needs: [lint, test]
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     permissions:

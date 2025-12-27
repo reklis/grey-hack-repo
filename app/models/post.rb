@@ -41,6 +41,7 @@ end
 class Post < ApplicationRecord
   include ActionText::Attachable
   extend FriendlyId
+
   validates_with PostValidator
 
   belongs_to :user
