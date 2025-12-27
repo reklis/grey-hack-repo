@@ -1,54 +1,6 @@
 {
   "lockfile_version": "1",
   "packages": {
-    "bundler@latest": {
-      "last_modified": "2025-11-23T21:50:36Z",
-      "resolved": "github:NixOS/nixpkgs/ee09932cedcef15aaf476f9343d1dea2cb77e261#bundler",
-      "source": "devbox-search",
-      "version": "2.7.2",
-      "systems": {
-        "aarch64-darwin": {
-          "outputs": [
-            {
-              "name": "out",
-              "path": "/nix/store/3r9p1n3b0li19pa16nwwpgy8hfx6qshk-bundler-2.7.2",
-              "default": true
-            }
-          ],
-          "store_path": "/nix/store/3r9p1n3b0li19pa16nwwpgy8hfx6qshk-bundler-2.7.2"
-        },
-        "aarch64-linux": {
-          "outputs": [
-            {
-              "name": "out",
-              "path": "/nix/store/kizjn9gqlvyylz4np3s1939nj1ip6pvq-bundler-2.7.2",
-              "default": true
-            }
-          ],
-          "store_path": "/nix/store/kizjn9gqlvyylz4np3s1939nj1ip6pvq-bundler-2.7.2"
-        },
-        "x86_64-darwin": {
-          "outputs": [
-            {
-              "name": "out",
-              "path": "/nix/store/fz8bl34i2axhr3qhnnwy3grbm1dxw8gm-bundler-2.7.2",
-              "default": true
-            }
-          ],
-          "store_path": "/nix/store/fz8bl34i2axhr3qhnnwy3grbm1dxw8gm-bundler-2.7.2"
-        },
-        "x86_64-linux": {
-          "outputs": [
-            {
-              "name": "out",
-              "path": "/nix/store/a078zrav6qv429dqd5f82hg3a934mc0j-bundler-2.7.2",
-              "default": true
-            }
-          ],
-          "store_path": "/nix/store/a078zrav6qv429dqd5f82hg3a934mc0j-bundler-2.7.2"
-        }
-      }
-    },
     "gcc@latest": {
       "last_modified": "2025-11-23T21:50:36Z",
       "resolved": "github:NixOS/nixpkgs/ee09932cedcef15aaf476f9343d1dea2cb77e261#gcc15",
@@ -134,8 +86,8 @@
       }
     },
     "github:NixOS/nixpkgs/nixpkgs-unstable": {
-      "last_modified": "2025-12-05T15:03:55Z",
-      "resolved": "github:NixOS/nixpkgs/a672be65651c80d3f592a89b3945466584a22069?lastModified=1764947035&narHash=sha256-EYHSjVM4Ox4lvCXUMiKKs2vETUSL5mx%2BJ2FfutM7T9w%3D"
+      "last_modified": "2025-12-26T11:10:58Z",
+      "resolved": "github:NixOS/nixpkgs/c633f572eded8c4f3c75b8010129854ed404a6ce?lastModified=1766747458&narHash=sha256-m63jjuo%2Fygo8ztkCziYh5OOIbTSXUDkKbqw3Vuqu4a4%3D"
     },
     "glibcLocales@latest": {
       "last_modified": "2025-11-23T21:50:36Z",
@@ -330,7 +282,7 @@
       }
     },
     "libyaml.dev": {
-      "resolved": "github:NixOS/nixpkgs/a672be65651c80d3f592a89b3945466584a22069?narHash=sha256-EYHSjVM4Ox4lvCXUMiKKs2vETUSL5mx%2BJ2FfutM7T9w%3D#libyaml.dev",
+      "resolved": "github:NixOS/nixpkgs/c633f572eded8c4f3c75b8010129854ed404a6ce?narHash=sha256-m63jjuo%2Fygo8ztkCziYh5OOIbTSXUDkKbqw3Vuqu4a4%3D#libyaml.dev",
       "source": "nixpkg"
     },
     "libyaml@latest": {
@@ -398,7 +350,7 @@
       }
     },
     "openssl.dev": {
-      "resolved": "github:NixOS/nixpkgs/a672be65651c80d3f592a89b3945466584a22069?narHash=sha256-EYHSjVM4Ox4lvCXUMiKKs2vETUSL5mx%2BJ2FfutM7T9w%3D#openssl.dev",
+      "resolved": "github:NixOS/nixpkgs/c633f572eded8c4f3c75b8010129854ed404a6ce?narHash=sha256-m63jjuo%2Fygo8ztkCziYh5OOIbTSXUDkKbqw3Vuqu4a4%3D#openssl.dev",
       "source": "nixpkg"
     },
     "openssl@latest": {
