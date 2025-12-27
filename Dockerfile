@@ -26,6 +26,10 @@ RUN curl -sL https://github.com/nodenv/node-build/archive/master.tar.gz | tar xz
 
 COPY . .
 
+# Download wordlist from external storage (too large for git)
+RUN mkdir -p wordlists && \
+    curl -L -o wordlists/precomputed_hashes.txt "https://greyhackrepo.us-iad-10.linodeobjects.com/wordlists%2Fprecomputed_hashes.txt"
+
 RUN bundle install && \
     rm -rf ~/.bundle/ $BUNDLE_PATH/ruby/*/cache $BUNDLE_PATH/ruby/*/bundler/gems/*/.git
 

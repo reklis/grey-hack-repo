@@ -55,3 +55,6 @@ node_modules
 test-results
 playwright-report
 e2e/results
+
+# Large wordlist file - downloaded during Docker build
+wordlists/precomputed_hashes.txt
