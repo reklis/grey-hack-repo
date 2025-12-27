@@ -43,7 +43,7 @@ jobs:
           - "1025:1025"
 
       minio:
-        image: minio/minio:latest
+        image: bitnami/minio:latest
         ports:
           - "9000:9000"
           - "9001:9001"
@@ -52,9 +52,9 @@ jobs:
           MINIO_ROOT_PASSWORD: miniosecret
         options: >-
           --health-cmd "curl -f http://localhost:9000/minio/health/live"
-          --health-interval 5s
-          --health-timeout 5s
-          --health-retries 5
+          --health-interval 10s
+          --health-timeout 10s
+          --health-retries 10
 
     env:
       RAILS_ENV: test
