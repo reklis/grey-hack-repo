@@ -52,7 +52,6 @@ gem "devise"
 gem "noticed"
 gem "friendly_id"
 gem "rubyzip", require: "zip" # required by FileJob
-gem "pay"
 # assets bundling
 gem "sprockets-rails"
 gem "vite_rails"

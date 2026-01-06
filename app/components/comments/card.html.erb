@@ -15,9 +15,6 @@
     <div class="ml-2 overflow-x-hidden w-full">
       <div class="flex text-sm text-chestnut-400 items-center">
         <%= @comment.user.name %>
-        <% if @comment.user.supporter? %>
-          <%= supporter_badge class: "ml-2" %>
-        <% end %>
         <div class="ml-auto block group-hover/comment:block sm:hidden">
           <button class="hover:underline cursor-pointer text-primary-content mr-2"
                 data-reflex="click->Comments::Form::ComponentReflex#respond"

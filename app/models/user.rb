@@ -32,7 +32,6 @@
 #  index_users_on_name                (name) UNIQUE
 #
 class User < ApplicationRecord
-  pay_customer
   extend FriendlyId
 
   devise :database_authenticatable, :registerable, :rememberable, :validatable, :confirmable, :recoverable
@@ -61,13 +60,6 @@ class User < ApplicationRecord
     else
       name
     end
-  end
-
-  def supporter?
-    return true if supporter == true
-    set_payment_processor :stripe
-    # payment_processor.charges.where(processor_plan: SupporterBadge.price).any?
-    payment_processor.charges.any?
   end
 
   def self.anonymous_user
