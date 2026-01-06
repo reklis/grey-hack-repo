@@ -33,7 +33,7 @@ class PostsController < ApplicationController
     authorize Post
     @post = Post.new
 
-    @post.visibility = :private
+    @post.visibility = :public
   end
 
   # GET /posts/1/builds
