@@ -3,15 +3,6 @@
 class UsersController < ApplicationController
   before_action :authenticate_user!, only: [:myposts, :mygists]
 
-  private
-
-  def sanitized_page(param_name = :page)
-    page = params[param_name].to_i
-    (page >= 1) ? page : 1
-  end
-
-  public
-
   def index
     authorize User
 
@@ -47,7 +38,7 @@ class UsersController < ApplicationController
         @posts = @posts.public_visibility
       end
 
-      @category_pagy, @posts = pagy @posts, items: 5, page_param: "cpage", page: sanitized_page(:cpage)
+      @category_pagy, @posts = pagy @posts, items: 5, page_param: :cpage
     end
   end
 

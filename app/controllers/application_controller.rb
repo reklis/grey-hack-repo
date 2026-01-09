@@ -22,6 +22,13 @@ class ApplicationController < ActionController::Base
 
   private
 
+  # Override Pagy's page getter to handle empty strings (which convert to 0)
+  def pagy_get_page(vars)
+    page_param = vars[:page_param] || Pagy::DEFAULT[:page_param] || :page
+    page = params[page_param].to_i
+    (page >= 1) ? page : 1
+  end
+
   def user_not_authorized(exception)
     redirect_to :root, alert: "action not permitted"
   end
