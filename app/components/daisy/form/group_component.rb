@@ -17,6 +17,8 @@ class Daisy::Form::GroupComponent < ViewComponent::Form::FieldComponent
 
   def required?
     return @required if @required.nil? == false
+    return false unless object.respond_to?(:class) && object.class.respond_to?(:validators_on)
+
     super
   end
 
