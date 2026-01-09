@@ -6,6 +6,7 @@ class CategoriesController < ApplicationController
   def show
     @category = Category.friendly.find(params[:id])
     set_posts
+    @posts = @posts.search(params[:query]["title"]) if params[:query]
 
     begin
       @pagy, @posts = pagy @posts.where(category: @category)
