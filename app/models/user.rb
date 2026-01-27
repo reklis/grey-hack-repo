@@ -74,4 +74,11 @@ class User < ApplicationRecord
     # TODO make users able to  join in more than 1 guild
     owner_guild || member_guilds.first
   end
+
+  protected
+
+  # Queue Devise emails via Sidekiq instead of sending synchronously
+  def send_devise_notification(notification, *args)
+    devise_mailer.send(notification, self, *args).deliver_later
+  end
 end
