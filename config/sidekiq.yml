@@ -10,4 +10,6 @@ production:
   - default
   - mailers
   - greyrepo_production_default
+  - greyrepo_production_mailers
   - greyrepo_development_default
+  - greyrepo_development_mailers
