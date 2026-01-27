@@ -1,6 +1,9 @@
 development:
   :concurrency: 5
 
+test:
+  :concurrency: 5
+
 production:
   :concurrency: 1
 
