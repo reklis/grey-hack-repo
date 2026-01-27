@@ -143,8 +143,10 @@ jobs:
 
       - name: Start Sidekiq
         run: |
-          bundle exec sidekiq -C config/sidekiq.yml &
+          bundle exec sidekiq -e test -C config/sidekiq.yml &
           sleep 5
+          # Verify Sidekiq is running
+          pgrep -f sidekiq || echo "WARNING: Sidekiq process not found!"
 
       - name: Start Rails server
         run: |

@@ -50,6 +50,9 @@ Rails.application.configure do
       domain: ENV.fetch("SMTP_DOMAIN", "localhost"),
       enable_starttls_auto: ENV["SMTP_STARTTLS"] == "true"
     }
+    # Enable actual email delivery for E2E tests
+    config.action_mailer.perform_deliveries = true
+    config.action_mailer.raise_delivery_errors = true
     # Use Sidekiq for async email delivery in E2E tests
     config.active_job.queue_adapter = :sidekiq
   else
