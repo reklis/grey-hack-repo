@@ -50,10 +50,14 @@ Rails.application.configure do
       domain: ENV.fetch("SMTP_DOMAIN", "localhost"),
       enable_starttls_auto: ENV["SMTP_STARTTLS"] == "true"
     }
+    # Use Sidekiq for async email delivery in E2E tests
+    config.active_job.queue_adapter = :sidekiq
   else
     # The :test delivery method accumulates sent emails in the
     # ActionMailer::Base.deliveries array.
     config.action_mailer.delivery_method = :test
+    # Use inline adapter for unit tests to process jobs synchronously
+    config.active_job.queue_adapter = :inline
   end
 
   # Print deprecation notices to the stderr.

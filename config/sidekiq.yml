@@ -8,5 +8,6 @@ production:
 
 :queues:
   - default
+  - mailers
   - greyrepo_production_default
   - greyrepo_development_default
