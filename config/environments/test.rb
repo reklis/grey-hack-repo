@@ -9,13 +9,13 @@ require "active_support/core_ext/integer/time"
 
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
-  # For E2E tests with Sidekiq, we need eager_load and cache_classes enabled
+  # For E2E tests with Sidekiq, we need production-like settings
   # since Sidekiq runs as a separate process
   if ENV["SMTP_ADDRESS"].present?
-    config.cache_classes = true
+    config.enable_reloading = false
     config.eager_load = true
   else
-    config.cache_classes = false
+    config.enable_reloading = true
     config.eager_load = false
   end
   config.action_view.cache_template_loading = true
