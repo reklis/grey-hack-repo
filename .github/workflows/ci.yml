@@ -65,6 +65,7 @@ jobs:
 
     env:
       RAILS_ENV: test
+      DISABLE_SPRING: "1"
       DATABASE_URL: "postgres://postgres:password@localhost:5432/greyrepo_test"
       REDIS_URL: "redis://localhost:6379"
       REDIS_CACHE_URL: "redis://localhost:6379/0"
