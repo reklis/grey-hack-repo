@@ -122,7 +122,7 @@ jobs:
 
       - name: Setup MinIO bucket
         run: |
-          curl -O https://dl.min.io/client/mc/release/linux-amd64/mc
+          curl -fL -o mc https://dl.min.io/client/mc/release/linux-amd64/mc
           chmod +x mc
           ./mc alias set myminio http://localhost:9000 minioaccess miniosecret
           ./mc mb --ignore-existing myminio/greyhackbucket
