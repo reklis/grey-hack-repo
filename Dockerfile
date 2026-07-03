@@ -7,9 +7,15 @@ ENV RAILS_ENV="production" \
     BUNDLE_WITHOUT="development:test" \
     BUNDLE_DEPLOYMENT="1"
 
-# Update gems and bundler
-RUN gem update --system --no-document && \
-    gem install -N bundler
+# Update RubyGems, Bundler, and vulnerable default gems that remain in ruby:3.3-slim.
+RUN apt-get update -qq && \
+    apt-get install --no-install-recommends -y build-essential && \
+    gem update --system --no-document && \
+    gem install -N bundler erb:6.0.4 net-imap:0.6.4.1 && \
+    rm -f /usr/local/lib/ruby/gems/3.3.0/specifications/default/erb-4.0.3.gemspec \
+          /usr/local/lib/ruby/gems/3.3.0/specifications/net-imap-0.4.21.gemspec && \
+    apt-get purge -y --auto-remove build-essential && \
+    rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
 FROM base AS build
 
