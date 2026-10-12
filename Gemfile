@@ -13,6 +13,8 @@ gem "connection_pool", "~> 2.4"
 gem "pg"
 gem "puma"
 gem "stringio"
+# Sprockets 4 still uses JSON's create_additions option, removed in JSON 3.
+gem "json", "~> 2.21"
 gem "turbo-rails"
 gem "jbuilder"
 # Use Active Storage variant
@@ -83,8 +85,8 @@ end
 
 group :test do
   gem "capybara"
-  gem "selenium-webdriver"
-  gem "webdrivers"
+  # Selenium Manager handles browser drivers without the obsolete webdrivers gem.
+  gem "selenium-webdriver", ">= 4.14"
 end
 
 gem "tzinfo-data", platforms: [:mingw, :mswin, :x64_mingw, :jruby]

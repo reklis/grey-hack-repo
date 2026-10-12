@@ -100,7 +100,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24.21.0'
           cache: 'yarn'
           cache-dependency-path: 'yarn.lock'
 
@@ -224,12 +224,45 @@ jobs:
             type=raw,value=latest
             type=sha,prefix=
 
-      - name: Build and push Docker image
+      - name: Build Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
-          push: true
+          pull: true
+          load: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+      - name: Check production boot and autoloading
+        run: |
+          docker run --rm --entrypoint bundle \
+            -e SECRET_KEY_BASE=security-build-check -e ACTIVE_STORAGE_SERVICE=local \
+            "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest" exec rails zeitwerk:check
+
+      - name: Reject fixable image vulnerabilities before publishing
+        run: |
+          docker run --rm \
+            -v /var/run/docker.sock:/var/run/docker.sock \
+            -v "$PWD:/reports" \
+            aquasec/trivy:0.75.0 image \
+            --image-src docker --scanners vuln \
+            --format json --output /reports/trivy.json \
+            "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest"
+          jq -e '[.Results[]?.Vulnerabilities[]? | select((.FixedVersion // "") != "")] | length == 0' trivy.json
+
+      - name: Upload vulnerability report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: image-vulnerabilities
+          path: trivy.json
+
+      - name: Push scanned Docker image
+        env:
+          IMAGE_TAGS: ${{ steps.meta.outputs.tags }}
+        run: |
+          while IFS= read -r tag; do
+            docker push "$tag"
+          done <<< "$IMAGE_TAGS"

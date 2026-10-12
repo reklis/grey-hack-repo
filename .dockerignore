@@ -4,6 +4,10 @@ tmp
 log
 public/assets
 public/packs
+public/vite
+public/vite-dev
+public/vite-test
+wordlists/precomputed_hashes.txt
 .bundle
 
 db/*.sqlite3
