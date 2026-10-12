@@ -107,26 +107,36 @@ jobs:
       - name: Install root Node dependencies
         run: yarn install --frozen-lockfile
 
-      - name: Start MinIO
+      - name: Start RustFS
         run: |
-          docker run -d --name minio \
+          docker run -d --name rustfs \
             -p 9000:9000 -p 9001:9001 \
-            -e MINIO_ROOT_USER=minioaccess \
-            -e MINIO_ROOT_PASSWORD=miniosecret \
-            minio/minio:latest server /data --console-address ":9001"
-          sleep 5
-          until curl -sf http://localhost:9000/minio/health/live; do
-            echo "Waiting for MinIO..."
+            -e RUSTFS_ACCESS_KEY=minioaccess \
+            -e RUSTFS_SECRET_KEY=miniosecret \
+            -e RUSTFS_REGION=us-east-1 \
+            rustfs/rustfs:1.0.0-beta.8-glibc /data
+          for i in {1..60}; do
+            if curl -s --max-time 2 -o /dev/null http://localhost:9000; then
+              exit 0
+            fi
+            echo "Waiting for RustFS..."
             sleep 2
           done
+          docker logs rustfs
+          exit 1
 
-      - name: Setup MinIO bucket
+      - name: Setup S3 bucket
         run: |
-          curl -fL -o mc https://dl.min.io/client/mc/release/linux-amd64/mc
-          chmod +x mc
-          ./mc alias set myminio http://localhost:9000 minioaccess miniosecret
-          ./mc mb --ignore-existing myminio/greyhackbucket
-          ./mc anonymous set public myminio/greyhackbucket
+          docker run --rm --network host --entrypoint sh \
+            -e AWS_ACCESS_KEY_ID=minioaccess \
+            -e AWS_SECRET_ACCESS_KEY=miniosecret \
+            -e AWS_DEFAULT_REGION=us-east-1 \
+            amazon/aws-cli:2.37.13 -ec '
+              aws --endpoint-url=http://localhost:9000 s3 mb s3://greyhackbucket
+              aws --endpoint-url=http://localhost:9000 s3api put-bucket-policy \
+                --bucket greyhackbucket \
+                --policy '\''{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Principal":"*","Action":"s3:GetObject","Resource":"arn:aws:s3:::greyhackbucket/*"}]}'\''
+            '
 
       - name: Set up database
         run: |
@@ -185,13 +195,13 @@ jobs:
             e2e/test-results/
           retention-days: 7
 
-      - name: Stop Rails server, Sidekiq, and MinIO
+      - name: Stop Rails server, Sidekiq, and RustFS
         if: always()
         run: |
           pkill -f "rails server" || true
           pkill -f "sidekiq" || true
-          docker stop minio || true
-          docker rm minio || true
+          docker stop rustfs || true
+          docker rm rustfs || true
 
   build:
     needs: [lint, test]
