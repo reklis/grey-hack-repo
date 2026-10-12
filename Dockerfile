@@ -16,6 +16,9 @@ RUN apt-get update -qq && \
     rm -f /usr/local/lib/ruby/gems/3.3.0/specifications/default/erb-4.*.gemspec \
           /usr/local/lib/ruby/gems/3.3.0/specifications/net-imap-0.4.*.gemspec \
           /usr/local/lib/ruby/gems/3.3.0/specifications/default/resolv-0.3.*.gemspec && \
+    rm -rf /usr/local/lib/ruby/3.3.0/erb.rb /usr/local/lib/ruby/3.3.0/erb \
+           /usr/local/lib/ruby/3.3.0/resolv.rb \
+           /usr/local/lib/ruby/gems/3.3.0/gems/net-imap-0.4.* && \
     apt-get purge -y --auto-remove build-essential && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 

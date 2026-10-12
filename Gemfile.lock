@@ -361,6 +361,7 @@ GEM
     regexp_parser (2.11.3)
     reline (0.6.3)
       io-console (~> 0.5)
+    resolv (0.8.1)
     responders (3.2.0)
       actionpack (>= 7.0)
       railties (>= 7.0)
@@ -547,6 +548,7 @@ DEPENDENCIES
   redcarpet
   redis
   redis-session-store
+  resolv (>= 0.7.2)
   rubocop
   rubyzip
   selenium-webdriver (>= 4.14)

@@ -250,6 +250,9 @@ jobs:
           docker run --rm --entrypoint bundle \
             -e SECRET_KEY_BASE=security-build-check -e ACTIVE_STORAGE_SERVICE=local \
             "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest" exec rails zeitwerk:check
+          docker run --rm --entrypoint bundle \
+            "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest" exec ruby -rresolv \
+            -e 'abort "Unpatched resolver" unless Gem.loaded_specs.fetch("resolv").version >= Gem::Version.new("0.7.2")'
 
       - name: Reject fixable image vulnerabilities before publishing
         run: |

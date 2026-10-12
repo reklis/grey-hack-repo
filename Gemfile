@@ -13,6 +13,8 @@ gem "connection_pool", "~> 2.4"
 gem "pg"
 gem "puma"
 gem "stringio"
+# Ensure Bundler uses the patched resolver, not Ruby 3.3's old stdlib copy.
+gem "resolv", ">= 0.7.2"
 # Sprockets 4 still uses JSON's create_additions option, removed in JSON 3.
 gem "json", "~> 2.21"
 gem "turbo-rails"
