@@ -1,0 +1,30 @@
+#!/bin/sh
+set -eu
+
+# These gems are also used outside the application bundle (for example by tools).
+gem install -N bundler:4.0.23 json:2.21.2 net-imap:0.6.8 resolv:0.8.1
+gem cleanup net-imap
+
+# Ruby 4.0.9 ships vulnerable JSON 2.18.0 as a default gem. Remove its actual
+# Ruby/native code as well as its specification, leaving the patched gem active.
+ruby -rfileutils -rrbconfig -e '
+  old_json = Gem::Specification.find_all_by_name("json").select do |spec|
+    spec.default_gem? && spec.version < Gem::Version.new("2.19.9")
+  end
+  unless old_json.empty?
+    FileUtils.rm_rf([
+      File.join(RbConfig::CONFIG.fetch("rubylibdir"), "json.rb"),
+      File.join(RbConfig::CONFIG.fetch("rubylibdir"), "json"),
+      File.join(RbConfig::CONFIG.fetch("rubyarchdir"), "json"),
+      *old_json.map(&:full_gem_path)
+    ])
+    old_json.each { |spec| FileUtils.rm_f(spec.loaded_from) }
+  end
+'
+
+ruby -rjson -rresolv -rnet/imap -e '
+  {"json" => "2.21.2", "resolv" => "0.8.1", "net-imap" => "0.6.8"}.each do |name, minimum|
+    version = Gem.loaded_specs.fetch(name).version
+    abort "Unpatched #{name}: #{version}" if version < Gem::Version.new(minimum) || version.prerelease?
+  end
+'

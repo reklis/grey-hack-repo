@@ -3,7 +3,6 @@
   "packages": [
     "postgresql@latest",
     "libpq@latest",
-    "ruby_3_3@latest",
     "openssl@latest",
     "openssl.dev",
     "libyaml@latest",

@@ -47,10 +47,11 @@ A community-driven scripts repository for the [Grey Hack](https://store.steampow
 
 ## Requirements
 
-- Ruby 3.3.x
-- PostgreSQL 14+
-- Redis 7+
-- Node.js 20+
+- Ruby 4.0.9 (latest stable, no prereleases)
+- Rails 8.1.4 (latest stable)
+- PostgreSQL 18 (Compose/CI)
+- Redis 8 (Compose/CI)
+- Node.js 24.22.2+ (24.x)
 - Yarn
 
 ## Quick Start with Docker
@@ -74,12 +75,17 @@ This starts:
 - **Sidekiq** for background jobs
 - **PostgreSQL** on port 5432
 - **Redis** on port 6379
-- **MinIO** (S3-compatible storage) on ports 9000/9001
+- **RustFS** (S3-compatible storage) on ports 9000/9001
 - **Mailpit** (email testing) on port 8025
 
 ## Development Setup
 
-### Option 1: Using Devbox (Recommended)
+### Option 1: Using Devbox
+
+Devbox supplies native libraries and database tools, not Ruby. Its catalog lags
+Ruby 4.0.9, so the old Ruby 3.3 package has been removed. Install the stable Ruby
+and Node versions in `.tool-versions` with your preferred version manager before
+entering `devbox shell`, or use Docker/the devcontainer for a managed runtime.
 
 ```bash
 # Install devbox
@@ -101,7 +107,7 @@ bin/dev
 
 ### Option 2: Manual Setup
 
-1. **Install dependencies:**
+1. **Install Ruby 4.0.9 and Node 24.22.2** (see `.tool-versions`), then install dependencies:
    ```bash
    bundle install
    yarn install
@@ -110,8 +116,8 @@ bin/dev
 2. **Start PostgreSQL and Redis:**
    ```bash
    # Using Docker
-   docker run -d --name postgres -e POSTGRES_PASSWORD=postgres -p 5432:5432 postgres:16-alpine
-   docker run -d --name redis -p 6379:6379 redis:8-alpine
+   docker run -d --name postgres -e POSTGRES_PASSWORD=postgres -p 5432:5432 postgres:18.6-alpine3.24
+   docker run -d --name redis -p 6379:6379 redis:8.10.2-alpine
    ```
 
 3. **Configure database:**
@@ -313,7 +319,12 @@ docker run -d \
 
 The GitHub Actions workflow (`.github/workflows/ci.yml`):
 1. Runs Playwright E2E tests on every push/PR
-2. Builds and pushes Docker image to GHCR on master branch
+2. Audits all dependency lockfiles, including development dependencies
+3. Builds, boots, and scans the Docker image on pushes and pull requests
+4. Pushes the scanned image to GHCR only on master
+
+See [container security maintenance](docs/security.md) for scan commands and
+remaining upstream vulnerabilities.
 
 ## Database Operations
 

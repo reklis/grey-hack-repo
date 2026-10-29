@@ -22,7 +22,7 @@ jobs:
       - name: Install Ruby and gems
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.3'
+          ruby-version: '4.0.9'
           bundler-cache: true
 
       - name: Run StandardRB
@@ -34,7 +34,7 @@ jobs:
 
     services:
       postgres:
-        image: postgres:14-alpine
+        image: postgres:18.6-alpine3.24
         ports:
           - "5432:5432"
         env:
@@ -48,7 +48,7 @@ jobs:
           --health-retries 5
 
       redis:
-        image: redis:7-alpine
+        image: redis:8.10.2-alpine
         ports:
           - "6379:6379"
         options: >-
@@ -58,7 +58,7 @@ jobs:
           --health-retries 5
 
       mailpit:
-        image: axllent/mailpit:latest
+        image: axllent/mailpit:v1.32.0
         ports:
           - "8025:8025"
           - "1025:1025"
@@ -94,13 +94,13 @@ jobs:
       - name: Install Ruby and gems
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.3'
+          ruby-version: '4.0.9'
           bundler-cache: true
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '24.21.0'
+          node-version: '24.22.2'
           cache: 'yarn'
           cache-dependency-path: 'yarn.lock'
 
@@ -114,7 +114,7 @@ jobs:
             -e RUSTFS_ACCESS_KEY=minioaccess \
             -e RUSTFS_SECRET_KEY=miniosecret \
             -e RUSTFS_REGION=us-east-1 \
-            rustfs/rustfs:1.0.0-beta.8-glibc /data
+            rustfs/rustfs:1.0.4 /data
           for i in {1..60}; do
             if curl -s --max-time 2 -o /dev/null http://localhost:9000; then
               exit 0
@@ -131,7 +131,7 @@ jobs:
             -e AWS_ACCESS_KEY_ID=minioaccess \
             -e AWS_SECRET_ACCESS_KEY=miniosecret \
             -e AWS_DEFAULT_REGION=us-east-1 \
-            amazon/aws-cli:2.37.13 -ec '
+            amazon/aws-cli:2.39.1 -ec '
               aws --endpoint-url=http://localhost:9000 s3 mb s3://greyhackbucket
               aws --endpoint-url=http://localhost:9000 s3api put-bucket-policy \
                 --bucket greyhackbucket \
@@ -203,9 +203,28 @@ jobs:
           docker stop rustfs || true
           docker rm rustfs || true
 
+  dependencies:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Audit all lockfiles, including development dependencies
+        run: |
+          docker run --rm -v "$PWD:/src:ro" -v "$PWD:/reports" \
+            aquasec/trivy:0.75.0 fs --scanners vuln --include-dev-deps \
+            --skip-dirs .git --format json --output /reports/dependencies.json /src
+          jq -e '[.Results[]?.Vulnerabilities[]? | select((.FixedVersion // "") != "")] | length == 0' dependencies.json
+
+      - name: Upload dependency vulnerability report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: dependency-vulnerabilities
+          path: dependencies.json
+
   build:
-    needs: [lint, test]
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    needs: [lint, test, dependencies]
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -219,6 +238,7 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Log in to Container Registry
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
@@ -251,8 +271,15 @@ jobs:
             -e SECRET_KEY_BASE=security-build-check -e ACTIVE_STORAGE_SERVICE=local \
             "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest" exec rails zeitwerk:check
           docker run --rm --entrypoint bundle \
-            "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest" exec ruby -rresolv \
-            -e 'abort "Unpatched resolver" unless Gem.loaded_specs.fetch("resolv").version >= Gem::Version.new("0.7.2")'
+            "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest" exec ruby -rbundler -rrails -rresolv -e '
+              puts "#{RUBY_DESCRIPTION}; Rails #{Rails.version}"
+              abort "Unstable Ruby" if RUBY_PATCHLEVEL < 0
+              abort "Prerelease dependency" if Bundler.locked_gems.specs.any? { |s| s.version.prerelease? }
+              abort "Unpatched resolver" unless Gem.loaded_specs.fetch("resolv").version >= Gem::Version.new("0.8.1")
+            '
+          docker run --rm --entrypoint ruby \
+            "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest" -rjson \
+            -e 'abort "Unpatched JSON outside Bundler" if Gem.loaded_specs.fetch("json").version < Gem::Version.new("2.21.2")'
 
       - name: Reject fixable image vulnerabilities before publishing
         run: |
@@ -265,14 +292,26 @@ jobs:
             "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest"
           jq -e '[.Results[]?.Vulnerabilities[]? | select((.FixedVersion // "") != "")] | length == 0' trivy.json
 
+      - name: Audit patched Compose PostgreSQL image
+        run: |
+          docker build --pull -f docker/postgres.Dockerfile -t greyrepo-postgres:18.6-security .
+          docker run --rm \
+            -v /var/run/docker.sock:/var/run/docker.sock -v "$PWD:/reports" \
+            aquasec/trivy:0.75.0 image --image-src docker --scanners vuln \
+            --format json --output /reports/trivy-postgres.json greyrepo-postgres:18.6-security
+          jq -e '[.Results[]?.Vulnerabilities[]? | select((.FixedVersion // "") != "")] | length == 0' trivy-postgres.json
+
       - name: Upload vulnerability report
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: image-vulnerabilities
-          path: trivy.json
+          path: |
+            trivy.json
+            trivy-postgres.json
 
       - name: Push scanned Docker image
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         env:
           IMAGE_TAGS: ${{ steps.meta.outputs.tags }}
         run: |

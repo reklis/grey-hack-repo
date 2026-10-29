@@ -1,11 +1,9 @@
 # frozen_string_literal: true
 
 source "https://rubygems.org"
-git_source(:github) { |repo| "https://github.com/#{repo}.git" }
+ruby "~> 4.0.9"
 
-ruby "~> 3.3.0"
-
-gem "rails", ">= 8.0"
+gem "rails", "~> 8.1.4"
 # Pin connection_pool to 2.x due to incompatibility with Rails 8.1.1 redis_cache_store
 # See: https://github.com/mperham/connection_pool/issues/210
 gem "connection_pool", "~> 2.4"
@@ -13,8 +11,8 @@ gem "connection_pool", "~> 2.4"
 gem "pg"
 gem "puma"
 gem "stringio"
-# Ensure Bundler uses the patched resolver, not Ruby 3.3's old stdlib copy.
-gem "resolv", ">= 0.7.2"
+# Keep the patched resolver explicit in the application bundle.
+gem "resolv", ">= 0.8.1"
 # Sprockets 4 still uses JSON's create_additions option, removed in JSON 3.
 gem "json", "~> 2.21"
 gem "turbo-rails"
@@ -33,7 +31,7 @@ gem "stimulus_reflex"
 gem "cable_ready"
 # front end gems
 gem "view_component-form"
-gem "view_component"
+gem "view_component", "~> 4.20"
 gem "simple_form"
 gem "meta-tags"
 gem "octicons_helper"
@@ -47,7 +45,7 @@ gem "blazer"
 gem "clockwork"
 gem "dry-transaction"
 gem "pundit"
-gem "pghero"
+gem "pghero", "~> 4.1"
 gem "redcarpet"
 gem "amoeba"
 gem "discord-notifier"
@@ -70,7 +68,7 @@ gem "foreman", require: false
 group :development, :test do
   gem "debug"
   gem "factory_bot_rails"
-  gem "faker", git: "https://github.com/faker-ruby/faker.git", branch: "main"
+  gem "faker", "~> 3.8"
   gem "rails-controller-testing"
   gem "simplecov"
 end
@@ -91,4 +89,4 @@ group :test do
   gem "selenium-webdriver", ">= 4.14"
 end
 
-gem "tzinfo-data", platforms: [:mingw, :mswin, :x64_mingw, :jruby]
+gem "tzinfo-data", platforms: [:windows, :jruby]

@@ -1,4 +1,4 @@
-FROM ruby:3.3.12-slim-trixie AS base
+FROM ruby:4.0.9-slim-trixie AS base
 
 WORKDIR /rails
 
@@ -8,17 +8,12 @@ ENV RAILS_ENV="production" \
     BUNDLE_DEPLOYMENT="1"
 
 # Patch OS packages and default gems, including gems outside Bundler's lockfile.
+COPY bin/patch-default-gems ./bin/patch-default-gems
 RUN apt-get update -qq && \
     apt-get upgrade -y && \
     apt-get install --no-install-recommends -y build-essential && \
-    gem update --system --no-document && \
-    gem install -N bundler erb:6.0.7 net-imap:0.6.8 resolv:0.7.2 && \
-    rm -f /usr/local/lib/ruby/gems/3.3.0/specifications/default/erb-4.*.gemspec \
-          /usr/local/lib/ruby/gems/3.3.0/specifications/net-imap-0.4.*.gemspec \
-          /usr/local/lib/ruby/gems/3.3.0/specifications/default/resolv-0.3.*.gemspec && \
-    rm -rf /usr/local/lib/ruby/3.3.0/erb.rb /usr/local/lib/ruby/3.3.0/erb \
-           /usr/local/lib/ruby/3.3.0/resolv.rb \
-           /usr/local/lib/ruby/gems/3.3.0/gems/net-imap-0.4.* && \
+    gem update --system 4.0.23 --no-document && \
+    ./bin/patch-default-gems && \
     apt-get purge -y --auto-remove build-essential && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
@@ -27,13 +22,20 @@ FROM base AS build
 RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y build-essential curl git libpq-dev libvips libyaml-dev node-gyp pkg-config python-is-python3
 
-ARG NODE_VERSION=24.21.0
+ARG NODE_VERSION=24.22.2
 ARG YARN_VERSION=1.22.22
 ENV PATH=/usr/local/node/bin:$PATH
-RUN curl -sL https://github.com/nodenv/node-build/archive/master.tar.gz | tar xz -C /tmp/ && \
-    /tmp/node-build-master/bin/node-build "${NODE_VERSION}" /usr/local/node && \
-    npm install -g yarn@$YARN_VERSION && \
-    rm -rf /tmp/node-build-master
+# Verify the official binary instead of relying on node-build's moving definitions.
+RUN arch="$(dpkg --print-architecture)" && \
+    case "$arch" in amd64) arch=x64 ;; arm64) ;; *) exit 1 ;; esac && \
+    cd /tmp && \
+    curl -fsSLO "https://nodejs.org/dist/v${NODE_VERSION}/SHASUMS256.txt" && \
+    curl -fsSLO "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-${arch}.tar.xz" && \
+    grep " node-v${NODE_VERSION}-linux-${arch}.tar.xz\$" SHASUMS256.txt | sha256sum -c - && \
+    mkdir -p /usr/local/node && \
+    tar -xJf "node-v${NODE_VERSION}-linux-${arch}.tar.xz" -C /usr/local/node --strip-components=1 && \
+    npm install -g yarn@${YARN_VERSION} && \
+    rm -f /tmp/SHASUMS256.txt /tmp/node-v*.tar.xz
 
 COPY Gemfile Gemfile.lock ./
 RUN bundle install && \

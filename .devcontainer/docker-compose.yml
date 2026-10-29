@@ -1,13 +1,10 @@
-version: '3'
-
 services:
   app:
     build:
       context: ..
       dockerfile: .devcontainer/Dockerfile
       args:
-        VARIANT: "3.1"
-        NODE_VERSION: "16"
+        NODE_VERSION: "24.22.2"
     volumes:
       - ..:/workspace:cached
     env_file: .env.development
@@ -19,15 +16,19 @@ services:
     # user: vscode
 
   db:
-    image: postgres:latest
+    image: greyrepo-postgres:18.6-security
+    build:
+      context: ..
+      dockerfile: docker/postgres.Dockerfile
     volumes:
       - postgres-data:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+      PGDATA: /var/lib/postgresql/data/pgdata
 
   redis_db:
-    image: redis:4.0-alpine
+    image: redis:8.10.2-alpine
     command: redis-server
     volumes:
       - redis-data:/data
