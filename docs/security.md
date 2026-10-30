@@ -7,8 +7,10 @@ those assets. Ruby default gems must also be patched separately from Bundler.
 CI audits all lockfiles (including development dependencies), builds and boots
 the production image on pushes and pull requests, and rejects **all findings
 with an available fix**, at any severity, before publishing on master. It also
-builds and scans the patched Compose PostgreSQL image. Reports are uploaded as
-workflow artifacts. No CVEs are allowlisted or suppressed.
+builds and scans the patched Compose PostgreSQL image, publishing it on master
+as `ghcr.io/reklis/grey-hack-repo:postgres-18.6-<full-commit-sha>` for production
+use. Reports are uploaded as workflow artifacts. No CVEs are allowlisted or
+suppressed.
 
 ## Reproduce the checks
 
@@ -60,7 +62,8 @@ scan is `image-patched.json`.
 | Final Ruby 4.0.9 application image | 1,065 | **0** |
 | All four lockfiles, including dev/test and Cargo | **0** | **0** |
 | Patched Compose PostgreSQL 18.6 | **0** | **0** |
-| Redis 8.10.2 Alpine (fresh pull) | **0** | **0** |
+| Redis 8.10.2 Alpine (initial audit) | **0** | **0** |
+| Redis 8.10.3 Alpine (datastore upgrade) | **0** | **0** |
 | RustFS 1.0.4 (musl, not `-glibc`) | **0** | **0** |
 | AWS CLI 2.39.1 bucket initializer | **0** | **0** |
 | Mailpit 1.32.0 | 3 | **2** |

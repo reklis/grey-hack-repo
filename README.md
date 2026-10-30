@@ -117,7 +117,7 @@ bin/dev
    ```bash
    # Using Docker
    docker run -d --name postgres -e POSTGRES_PASSWORD=postgres -p 5432:5432 postgres:18.6-alpine3.24
-   docker run -d --name redis -p 6379:6379 redis:8.10.2-alpine
+   docker run -d --name redis -p 6379:6379 redis:8.10.3-alpine
    ```
 
 3. **Configure database:**

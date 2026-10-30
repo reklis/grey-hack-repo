@@ -28,7 +28,7 @@ services:
       PGDATA: /var/lib/postgresql/data/pgdata
 
   redis_db:
-    image: redis:8.10.2-alpine
+    image: redis:8.10.3-alpine
     command: redis-server
     volumes:
       - redis-data:/data
