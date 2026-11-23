@@ -1,4 +1,4 @@
-FROM ruby:4.0.9-slim-trixie AS base
+FROM ruby:4.0.10-slim-trixie AS base
 
 WORKDIR /rails
 
@@ -12,7 +12,7 @@ COPY bin/patch-default-gems ./bin/patch-default-gems
 RUN apt-get update -qq && \
     apt-get upgrade -y && \
     apt-get install --no-install-recommends -y build-essential && \
-    gem update --system 4.0.23 --no-document && \
+    gem update --system 4.0.24 --no-document && \
     ./bin/patch-default-gems && \
     apt-get purge -y --auto-remove build-essential && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
@@ -22,7 +22,7 @@ FROM base AS build
 RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y build-essential curl git libpq-dev libvips libyaml-dev node-gyp pkg-config python-is-python3
 
-ARG NODE_VERSION=24.22.2
+ARG NODE_VERSION=24.22.3
 ARG YARN_VERSION=1.22.22
 ENV PATH=/usr/local/node/bin:$PATH
 # Verify the official binary instead of relying on node-build's moving definitions.

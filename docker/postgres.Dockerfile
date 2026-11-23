@@ -1,4 +1,4 @@
-FROM postgres:18.6-alpine3.24
+FROM postgres:18.7-alpine3.24
 
 # Patch distro libraries and replace the stale Go-based gosu binary with
 # Alpine's su-exec. Both exec the entrypoint as postgres without a supervisor.

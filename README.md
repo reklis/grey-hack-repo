@@ -47,11 +47,11 @@ A community-driven scripts repository for the [Grey Hack](https://store.steampow
 
 ## Requirements
 
-- Ruby 4.0.9 (latest stable, no prereleases)
-- Rails 8.1.4 (latest stable)
+- Ruby 4.0.10 (stable)
+- Rails 8.1.4.1 (stable)
 - PostgreSQL 18 (Compose/CI)
 - Redis 8 (Compose/CI)
-- Node.js 24.22.2+ (24.x)
+- Node.js 24.22.3+ (24.x)
 - Yarn
 
 ## Quick Start with Docker
@@ -82,8 +82,7 @@ This starts:
 
 ### Option 1: Using Devbox
 
-Devbox supplies native libraries and database tools, not Ruby. Its catalog lags
-Ruby 4.0.9, so the old Ruby 3.3 package has been removed. Install the stable Ruby
+Devbox supplies native libraries and database tools, not Ruby. Install the stable Ruby
 and Node versions in `.tool-versions` with your preferred version manager before
 entering `devbox shell`, or use Docker/the devcontainer for a managed runtime.
 
@@ -107,7 +106,7 @@ bin/dev
 
 ### Option 2: Manual Setup
 
-1. **Install Ruby 4.0.9 and Node 24.22.2** (see `.tool-versions`), then install dependencies:
+1. **Install Ruby 4.0.10 and Node 24.22.3** (see `.tool-versions`), then install dependencies:
    ```bash
    bundle install
    yarn install
@@ -116,8 +115,8 @@ bin/dev
 2. **Start PostgreSQL and Redis:**
    ```bash
    # Using Docker
-   docker run -d --name postgres -e POSTGRES_PASSWORD=postgres -p 5432:5432 postgres:18.6-alpine3.24
-   docker run -d --name redis -p 6379:6379 redis:8.10.3-alpine
+   docker run -d --name postgres -e POSTGRES_PASSWORD=postgres -p 5432:5432 postgres:18.7-alpine3.24
+   docker run -d --name redis -p 6379:6379 redis:8.12.0-alpine
    ```
 
 3. **Configure database:**
@@ -320,11 +319,11 @@ docker run -d \
 The GitHub Actions workflow (`.github/workflows/ci.yml`):
 1. Runs Playwright E2E tests on every push/PR
 2. Audits all dependency lockfiles, including development dependencies
-3. Builds, boots, and scans the Docker image on pushes and pull requests
-4. Pushes the scanned image to GHCR only on master
+3. Builds and boots the app image, then scans it and the Compose service images
+4. Publishes the scanned app and PostgreSQL images to GHCR only on master
 
-See [container security maintenance](docs/security.md) for scan commands and
-remaining upstream vulnerabilities.
+See the [latest container audit](docs/security-2026-11-23.md) for current findings
+and [container security maintenance](docs/security.md) for prior audits.
 
 ## Database Operations
 

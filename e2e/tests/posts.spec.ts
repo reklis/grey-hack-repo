@@ -93,7 +93,7 @@ async function createPublishedPost(
   await page.goto(postUrl);
   await page.waitForLoadState('networkidle');
 
-  return { title, url: `http://localhost:3000/posts/${slug}`, slug };
+  return { title, url: new URL(postUrl, currentUrl).href, slug };
 }
 
 test.describe('Posts', () => {

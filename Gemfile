@@ -1,15 +1,15 @@
 # frozen_string_literal: true
 
 source "https://rubygems.org"
-ruby "~> 4.0.9"
+ruby "~> 4.0.10"
 
-gem "rails", "~> 8.1.4"
+gem "rails", "~> 8.1.4", ">= 8.1.4.1"
 # Pin connection_pool to 2.x due to incompatibility with Rails 8.1.1 redis_cache_store
 # See: https://github.com/mperham/connection_pool/issues/210
 gem "connection_pool", "~> 2.4"
 
 gem "pg"
-gem "puma"
+gem "puma", "~> 8.1", ">= 8.1.2"
 gem "stringio"
 # Keep the patched resolver explicit in the application bundle.
 gem "resolv", ">= 0.8.1"

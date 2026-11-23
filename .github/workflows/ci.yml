@@ -22,7 +22,7 @@ jobs:
       - name: Install Ruby and gems
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '4.0.9'
+          ruby-version: '4.0.10'
           bundler-cache: true
 
       - name: Run StandardRB
@@ -34,7 +34,7 @@ jobs:
 
     services:
       postgres:
-        image: postgres:18.6-alpine3.24
+        image: postgres:18.7-alpine3.24
         ports:
           - "5432:5432"
         env:
@@ -48,7 +48,7 @@ jobs:
           --health-retries 5
 
       redis:
-        image: redis:8.10.3-alpine
+        image: redis:8.12.0-alpine
         ports:
           - "6379:6379"
         options: >-
@@ -56,12 +56,6 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-
-      mailpit:
-        image: axllent/mailpit:v1.32.0
-        ports:
-          - "8025:8025"
-          - "1025:1025"
 
     env:
       RAILS_ENV: test
@@ -94,32 +88,35 @@ jobs:
       - name: Install Ruby and gems
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '4.0.9'
+          ruby-version: '4.0.10'
           bundler-cache: true
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '24.22.2'
+          node-version: '24.22.3'
           cache: 'yarn'
           cache-dependency-path: 'yarn.lock'
 
       - name: Install root Node dependencies
         run: yarn install --frozen-lockfile
 
-      - name: Start RustFS
+      - name: Start patched Mailpit and RustFS
         run: |
+          docker build --pull -f docker/mailpit.Dockerfile -t greyrepo-mailpit:ci .
+          docker run -d --name mailpit -p 8025:8025 -p 1025:1025 greyrepo-mailpit:ci
+          docker build --pull -f docker/rustfs.Dockerfile -t greyrepo-rustfs:ci .
           docker run -d --name rustfs \
             -p 9000:9000 -p 9001:9001 \
             -e RUSTFS_ACCESS_KEY=minioaccess \
             -e RUSTFS_SECRET_KEY=miniosecret \
             -e RUSTFS_REGION=us-east-1 \
-            rustfs/rustfs:1.0.4 /data
+            greyrepo-rustfs:ci /data
           for i in {1..60}; do
             if curl -s --max-time 2 -o /dev/null http://localhost:9000; then
               exit 0
             fi
-            echo "Waiting for RustFS..."
+            echo "Waiting for RustFS (attempt $i of 60)..."
             sleep 2
           done
           docker logs rustfs
@@ -131,7 +128,7 @@ jobs:
             -e AWS_ACCESS_KEY_ID=minioaccess \
             -e AWS_SECRET_ACCESS_KEY=miniosecret \
             -e AWS_DEFAULT_REGION=us-east-1 \
-            amazon/aws-cli:2.39.1 -ec '
+            amazon/aws-cli:2.42.2 -ec '
               aws --endpoint-url=http://localhost:9000 s3 mb s3://greyhackbucket
               aws --endpoint-url=http://localhost:9000 s3api put-bucket-policy \
                 --bucket greyhackbucket \
@@ -166,7 +163,7 @@ jobs:
         run: |
           for i in {1..30}; do
             curl -s http://localhost:3000 > /dev/null && break
-            echo "Waiting for server..."
+            echo "Waiting for Rails (attempt $i of 30)..."
             sleep 2
           done
           curl -s http://localhost:3000 > /dev/null || exit 1
@@ -195,13 +192,12 @@ jobs:
             e2e/test-results/
           retention-days: 7
 
-      - name: Stop Rails server, Sidekiq, and RustFS
+      - name: Stop Rails server, Sidekiq, Mailpit, and RustFS
         if: always()
         run: |
           pkill -f "rails server" || true
           pkill -f "sidekiq" || true
-          docker stop rustfs || true
-          docker rm rustfs || true
+          docker rm -f mailpit rustfs || true
 
   dependencies:
     runs-on: ubuntu-latest
@@ -212,7 +208,7 @@ jobs:
       - name: Audit all lockfiles, including development dependencies
         run: |
           docker run --rm -v "$PWD:/src:ro" -v "$PWD:/reports" \
-            aquasec/trivy:0.75.0 fs --scanners vuln --include-dev-deps \
+            aquasec/trivy:0.76.2 fs --scanners vuln --include-dev-deps \
             --skip-dirs .git --format json --output /reports/dependencies.json /src
           jq -e '[.Results[]?.Vulnerabilities[]? | select((.FixedVersion // "") != "")] | length == 0' dependencies.json
 
@@ -285,8 +281,8 @@ jobs:
         run: |
           docker run --rm \
             -v /var/run/docker.sock:/var/run/docker.sock \
-            -v "$PWD:/reports" \
-            aquasec/trivy:0.75.0 image \
+            -v trivy-cache:/root/.cache/trivy -v "$PWD:/reports" \
+            aquasec/trivy:0.76.2 image \
             --image-src docker --scanners vuln \
             --format json --output /reports/trivy.json \
             "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest"
@@ -294,15 +290,35 @@ jobs:
 
       - name: Audit patched Compose PostgreSQL image
         run: |
-          docker build --pull -f docker/postgres.Dockerfile -t greyrepo-postgres:18.6-security \
+          docker build --pull -f docker/postgres.Dockerfile -t greyrepo-postgres:18.7-security \
             --label org.opencontainers.image.source="${{ github.server_url }}/${{ github.repository }}" \
             --label org.opencontainers.image.revision="${{ github.sha }}" \
-            --label org.opencontainers.image.title="Grey Repo patched PostgreSQL 18.6" .
+            --label org.opencontainers.image.title="Grey Repo patched PostgreSQL 18.7" .
           docker run --rm \
-            -v /var/run/docker.sock:/var/run/docker.sock -v "$PWD:/reports" \
-            aquasec/trivy:0.75.0 image --image-src docker --scanners vuln \
-            --format json --output /reports/trivy-postgres.json greyrepo-postgres:18.6-security
+            -v /var/run/docker.sock:/var/run/docker.sock \
+            -v trivy-cache:/root/.cache/trivy -v "$PWD:/reports" \
+            aquasec/trivy:0.76.2 image --image-src docker --scanners vuln \
+            --format json --output /reports/trivy-postgres.json greyrepo-postgres:18.7-security
           jq -e '[.Results[]?.Vulnerabilities[]? | select((.FixedVersion // "") != "")] | length == 0' trivy-postgres.json
+
+      - name: Audit remaining Compose service images
+        run: |
+          docker build --pull -f docker/mailpit.Dockerfile -t greyrepo-mailpit:ci .
+          docker build --pull -f docker/rustfs.Dockerfile -t greyrepo-rustfs:ci .
+          docker pull redis:8.12.0-alpine
+          docker pull amazon/aws-cli:2.42.2
+          status=0
+          for entry in mailpit=greyrepo-mailpit:ci rustfs=greyrepo-rustfs:ci redis=redis:8.12.0-alpine aws-cli=amazon/aws-cli:2.42.2; do
+            name=${entry%%=*}
+            image=${entry#*=}
+            docker run --rm \
+              -v /var/run/docker.sock:/var/run/docker.sock \
+              -v trivy-cache:/root/.cache/trivy -v "$PWD:/reports" \
+              aquasec/trivy:0.76.2 image --image-src docker --scanners vuln \
+              --format json --output "/reports/trivy-$name.json" "$image"
+            jq -e '[.Results[]?.Vulnerabilities[]? | select((.FixedVersion // "") != "")] | length == 0' "trivy-$name.json" || status=1
+          done
+          exit "$status"
 
       - name: Upload vulnerability report
         uses: actions/upload-artifact@v4
@@ -311,14 +327,14 @@ jobs:
           name: image-vulnerabilities
           path: |
             trivy.json
-            trivy-postgres.json
+            trivy-*.json
 
       - name: Publish scanned PostgreSQL image
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         env:
-          POSTGRES_IMAGE: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:postgres-18.6-${{ github.sha }}
+          POSTGRES_IMAGE: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:postgres-18.7-${{ github.sha }}
         run: |
-          docker tag greyrepo-postgres:18.6-security "$POSTGRES_IMAGE"
+          docker tag greyrepo-postgres:18.7-security "$POSTGRES_IMAGE"
           docker push "$POSTGRES_IMAGE"
 
       - name: Push scanned Docker image
